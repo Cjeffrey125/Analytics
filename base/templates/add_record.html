@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+
+{% load static %} 
+
+{% block content %}
+
+<link rel="stylesheet" type="text/css" href="{% static '/css/main.css' %}">
+
+    <h1>Add Record</h1>
+
+    <br/>
+  
+    <form method="POST" action="{% url 'add_record' %}">
+        {% csrf_token %}
+        
+        <div class = "text-center">
+            <h3>Personal Data</h3>
+        </div>
+
+        <div class="form-group row">
+            <div class="col">
+            {{ form.control_number }}
+        </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col">
+                {{ form.first_name }}
+                <div class="subscript">{{ form.first_name.help_text | safe }}</div>
+            </div>
+            <div class="col">
+                {{ form.last_name }}
+                <div class="subscript">{{ form.last_name.help_text | safe }}</div>
+            </div>
+            <div class="col">
+                {{ form.middle_name }}
+                <div class="subscript">{{ form.middle_name.help_text | safe }}</div>
+            </div>
+        </div>
+        
+
+        <div class="form-group row">
+            <div class="col">
+            {{ form.address }}
+            <div class="subscript">{{ form.address.help_text | safe }}</div>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="input-group col">
+                {{ form.date_of_birth }}
+            </div>
+            <div class="col">
+                {{ form.place_of_birth }}
+            </div>
+            <div class="col">
+                {{ form.gender }}
+            </div>
+            <div class="col">
+                {{ form.contact_no }}
+            </div>
+        </div>
+        
+        <div class="form-group row"> 
+            <div class="col">
+            {{ form.email_address }}
+            </div>
+
+            <div class="col">
+            {{ form.school }}
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col">
+            {{ form.course }}
+            </div>
+       
+            <div class="col">
+            {{ form.gwa }}
+            </div>
+
+            <div class="col">
+            {{ form.rank }}
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col">
+            {{ form.jhs }}
+            </div>
+
+            <div class="col">
+            {{ form.jhs_address }}
+            </div>
+
+            <div class="col">
+            {{ form.jhs_educational_provider }}
+            </div>
+        </div>
+     
+        <div class="form-group row">
+            <div class="col">
+            {{ form.shs }}
+            </div>
+    
+            <div class="col">
+            {{ form.shs_address }}
+            </div>
+
+            <div class="col">
+            {{ form.shs_educational_provider }}
+            </div>
+        </div>
+    
+
+
+        <div class = "text-center">
+            <h3>Family Data</h3>
+        </div>
+
+        <div class="form-group row">
+            <label for="applicant_father">Father</label>
+            <div class="col">
+            {{ form.father_voter_status }}
+            </div>
+
+            <div class="col">
+            {{ form.father_name }}
+            </div>
+        
+            <div class="col">
+            {{ form.father_educational_attainment }}
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col">
+            {{ form.father_occupation }}
+            </div>
+            <div class="col">
+            {{ form.father_employer}}
+            </div>
+        </div>
+        
+
+
+        <div class="form-group row">
+            <label for="applicant_mother">Mother</label>
+            <div class="col">
+            {{ form.mother_voter_status }}
+            </div>
+
+            <div class="col">
+            {{ form.mother_name }}
+            </div>
+
+            <div class="col">
+            {{ form.mother_educational_attainment }}
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col">
+            {{ form.mother_occupation}}
+            </div>
+
+            <div class="col">
+            {{ form.mother_employer}}
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="applicant_guardian">Guardian</label>
+            <div class="col">
+            {{ form.guardian_voter_status }}
+            </div>
+            
+            <div class="col">
+            {{ form.guardian_name }}
+            </div>
+
+            <div class="col">
+            {{ form.guardian_educational_attainment }}
+            </div>
+        </div>
+        
+        <div class="form-group row">
+            <div class="col">
+            {{ form.guardian_occupation }}
+            </div>
+
+            <div class="col">
+            {{ form.guardian_employer }}
+            </div>
+        </div>
+     
+        
+        <div class = "text-center">
+        <button type="submit" class="btn btn-secondary">Save Record</button>
+        </div>
+
+    </form>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var dateOfBirthSelect = document.getElementById("id_date_of_birth");
+            dateOfBirthSelect.addEventListener("change", function() {
+                dateOfBirthSelect.classList.remove("placeholder");
+            });
+        });
+    </script>
+    <style>
+        #id_date_of_birth.placeholder {
+            color: #6c757d;
+        }
+    </style>
+
+
+
+{% endblock %}

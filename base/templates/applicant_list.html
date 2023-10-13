@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  {% if user.is_authenticated %}
+
+    <h1>Applicant List</h1>
+
+
+    <div class="d-flex justify-content-end">
+    <a href = "{% url 'add_record' %}" class="btn btn-secondary">Add Record</a>
+    <a href="{% url 'export' %}" class="btn btn-secondary" data-toggle="modal" data-target="#exportModal">Export Table</a>
+    <a href="{% url 'import' %}" class="btn btn-secondary" data-toggle="modal" data-target="#exportModal">Import Table</a>
+    </div>
+
+ 
+        <br/>   
+        
+        {% if StudentRecords %} 
+        <table class="table table-light table-hover">
+          <caption>Table Description</caption>
+          <thead class="table-dark">
+            <tr>
+                <th scope="col">Control Number</th>
+                <th scope="col">Name</th>
+                <th scope="col">Course</th>
+                <th scope="col">School</th>
+                <th scope="col">Status</th>
+            
+            </tr>
+        </thead>
+        {% for student_record in StudentRecords %}
+        <tbody>
+            <tr>
+                <td><a href = "{% url 'student_info' student_record.control_number %}">{{ student_record.control_number }}</a></td>
+                <td>{{ student_record}}</td>
+                <td>{{ student_record.course }}</td>
+                <td>{{ student_record.school }}</td>
+                <td>{{ student_record.status }}</td>
+            </tr>
+            {% endfor %}    
+
+        </tbody>
+        </table>
+
+      {% else %}
+      <div class = "d-flex justify-content-center">
+        <h1 >No student records found.</h1>
+      </div>
+      {% endif %}
+
+    </div>
+
+  {% endif %}
+
+{% endblock %}

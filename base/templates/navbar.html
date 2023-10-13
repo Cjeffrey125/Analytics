@@ -1,0 +1,79 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Navigation</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  </head>
+  <body>
+
+    <div class="hero">
+      <nav>
+        <a class="navbar-brand" href="{% url 'home' %}" style="color: black;">
+          <img src="{% static 'images/logo.png' %}" class="logo"> Biñan Analytica 
+        </a>
+
+        <ul class="nav-list"> 
+          
+          {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'dashboard' %}" style="color: black;">Overview</a>
+        </li>
+
+        <img src="{% static 'images/profile.png' %}" class="user-pic" onclick="toggleMenu()">
+
+        <div class="sub-menu-wrap" id="subMenu">
+          <div class = "sub-menu">
+            <div class= "user-info">  
+              <img src="{% static 'images/profile.png' %}" class="user-pic">
+              <h4>{{ user.first_name }}, {{ user.last_name }}</h4>
+            </div>
+            <hr>
+
+            <a href="#" class="sub-menu-link">
+              <img src="{% static 'images/profile.png' %}">
+              <p>Edit Profile</p>
+            </a>
+
+            <a href="#" class = "sub-menu-link">
+              <img src = "{% static 'images/help.png' %}">
+                <p>Help</p>
+            </a>
+
+            <a href="#" class = "sub-menu-link">
+              <img src = "{% static 'images/setting.png' %}">
+                <p>Settings</p>
+            </a>
+
+            <a class = "sub-menu-link" href="{% url 'logout' %}" >
+              <img src = "{% static 'images/logout.png' %}">
+                <p>Logout</p>
+            </a>
+
+          </div>
+        </div>
+
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'signup' %}" style="color: black;">Create an Account?</a> 
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}" style="color: black;">Login</a>
+          </li>
+          {% endif %}
+        </ul>
+
+      </nav>
+    </div>
+
+    <script>
+      let subMenu = document.getElementById("subMenu");
+
+      function toggleMenu() {
+        subMenu.classList.toggle("open-menu")
+      }
+    </script>
+
+  </body>
+</html>
