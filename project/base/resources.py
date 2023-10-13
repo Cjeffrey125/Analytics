@@ -26,17 +26,22 @@ class CollegeStudentApplicationResource(resources.ModelResource):
     shs_educational_provider = fields.Field(column_name= 'Education Provider', attribute = 'shs_educational_provider' )
 
     father_name = fields.Field(column_name= 'Father Name', attribute = 'father_name' )
-    father_voter_status = fields.Field(column_name= 'Registered Voter', attribute = 'father_voter_status' )
-    father_educational_attainment = fields.Field(column_name= 'Educational Attainment', attribute = 'father_educational_attainment')
-    father_employer = fields.Field(column_name= 'Name of Employer', attribute ='father_employer')
+    father_voter_status = fields.Field(column_name= 'Father Voter Status', attribute = 'father_voter_status' )
+    father_educational_attainment = fields.Field(column_name= 'Father Educational Attainment', attribute = 'father_educational_attainment')
+    father_occupation = fields.Field(column_name='Father Occupation', attribute = 'father_occupation')
+    father_employer = fields.Field(column_name= 'Father Employer', attribute ='father_employer')
+    
     mother_name = fields.Field(column_name= 'Mother Name', attribute = 'mother_name')
-    mother_voter_status = fields.Field(column_name= 'Registered Voter', attribute = 'mother_voter_status')
-    mother_educational_attainment = fields.Field(column_name= 'Educational Attainment', attribute = 'mother_educational_attainment')
-    mother_employer = fields.Field(column_name= 'Name of Employer', attribute = 'mother_employer')
+    mother_voter_status = fields.Field(column_name= 'Mother Voter Status', attribute = 'mother_voter_status')
+    mother_educational_attainment = fields.Field(column_name= 'Mother Educational Attainment', attribute = 'mother_educational_attainment')
+    mother_occupation = fields.Field(column_name='Mother Occupation', attribute ='mother_occupation')
+    mother_employer = fields.Field(column_name= 'Mother Employer', attribute = 'mother_employer')
+
     guardian_name = fields.Field(column_name= 'Legal Guardian', attribute = 'guardian_name')
-    guardian_voter_status = fields.Field(column_name= 'Registered Voter', attribute = 'guardian_voter_status')
-    guardian_educational_attainment = fields.Field(column_name= 'Educational Attainment', attribute = 'guardian_educational_attainment')
-    guardian_employer = fields.Field(column_name= 'Name of Employer', attribute = 'guardian_employer')
+    guardian_voter_status = fields.Field(column_name= 'Guardian Voter Status', attribute = 'guardian_voter_status')
+    guardian_educational_attainment = fields.Field(column_name= 'Guardian Educational Attainment', attribute = 'guardian_educational_attainment')
+    guardian_occupation = fields.Field(column_name='Guardian Occupation', attribute ='guardian_occupation')
+    guardian_employer = fields.Field(column_name= 'Guardian Employer', attribute = 'guardian_employer')
 
     
 

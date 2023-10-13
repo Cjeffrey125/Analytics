@@ -4,6 +4,8 @@
 
 {% block content %}
 
+<link rel="stylesheet" type="text/css" href="{% static 'main.css' %}">
+
 <h1>Update Record</h1>
     <div class="col-md-6 offset-md-3"></div>
 
@@ -13,6 +15,12 @@
         
         <div class = "text-center">
             <h3>Personal Data</h3>
+        </div>
+
+        <div class="form-group row">
+            <div class="col">
+            {{ form.control_number }}
+        </div>
         </div>
 
         <div class="form-group row">
@@ -30,7 +38,7 @@
             </div>
         </div>
 
-
+        <!-- need some edit pa -->
         <div class="form-group row">
             <div class="col">
             {{ form.address }}

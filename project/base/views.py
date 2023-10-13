@@ -173,35 +173,32 @@ def data_visualization(request):
 
 #CRUD
 def view_applicant_table(request):
-    student_records = CollegeStudentApplication.objects.all()
+    StudentRecords = CollegeStudentApplication.objects.all()
 
     if not request.session.get('login_message_displayed', False):
         messages.success(request, "You have logged in successfully!")
         request.session['login_message_displayed'] = True
 
-    return render(request, 'applicant_list.html', {'StudentRecords': student_records})
+    return render(request, 'applicant_list.html', {'StudentRecords': StudentRecords})
 
-
-
-def applicant_information(request, control_number):
+def applicant_information(request, pk):
     if request.user.is_authenticated:
-        student_records = CollegeStudentApplication.objects.get(control_number = control_number)
-        return render(request, 'applicants_info.html', {'student_records': student_records})
+        StudentRecords = CollegeStudentApplication.objects.get(id = pk)
+        return render (request, 'applicants_info.html',{'StudentRecords': StudentRecords})
     else:
-        messages.error(request, "You need to be logged in to see this data!")
+        messages.success(request, "You need to be Logged in to see this Data!")
         return redirect('home')
+    
 
-
-def delete_information(request, control_number):
+def delete_information(request, pk):
     if request.user.is_authenticated:
-        delete_record = CollegeStudentApplication.objects.get(control_number=control_number)
+        delete_record = CollegeStudentApplication.objects.get(id = pk)
         delete_record.delete()
         messages.success(request, "Record has been deleted")
         return redirect('applicant_list')
     else:
-        messages.error(request, "You need to be logged in for this process")
+        messages.success(request, "You need to be Logged in for this process")
         return redirect('home')
-
     
 
 def add_information(request):  
@@ -212,25 +209,24 @@ def add_information(request):
                 add_record = form.save() 
                 messages.success(request, "Record Successfully Added")
                 return redirect('applicant_list')  
-        return render(request, 'add_record.html', {'form': form, }) 
+        return render(request, 'add_record.html', {'form': form}) 
     else:
         messages.error(request, "You need to be logged in for this process.")
         return redirect('home')
     
     
-def update_information(request, control_number):
+def update_information(request, pk):
     if request.user.is_authenticated:
-        current_record = CollegeStudentApplication.objects.get(control_number=control_number)
+        current_record = CollegeStudentApplication.objects.get(id = pk)
         form =  AddApplicantForm(request.POST or None, instance=current_record)
         if form.is_valid():
             form.save()
-            messages.success(request, "Record Successfully Updated")
-            return redirect('home')
-        return render(request, 'update_record.html', {'form':form})
+            messages.success(request, "Record has been updated!!")
+            return redirect("applicant_list")
+        return render(request, 'update_record.html', {'form': form})
     else:
         messages.error(request, "You need to be logged in for this process.")
         return redirect('home')
-
   
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         
