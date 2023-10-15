@@ -7,11 +7,15 @@ body {
 nav {
     background: white;
     width: 100%;
+    height: 7%;
     padding: 5px 5%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    position: relative;
+    position: fixed; 
+    top: 0; 
+    left: 0;
+    z-index: 1000; 
 }
 
 .logo {
@@ -110,6 +114,43 @@ nav ul li a {
 }
 /* --------------------------------------- */
 
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #585858;
+    padding: 20px;
+    color: #fff;
+    z-index: 1; 
+    margin-top: 3%;
+}
+
+.sidebar h2 {
+    margin-bottom: 20px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0; 
+}
+
+.sidebar ul li {
+    margin-bottom: 10px;
+}
+
+.sidebar ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.sidebar ul li a:hover {
+    text-decoration: underline;
+}
+/* --------------------------------------- */
 
 /* Forms for Application form */
 .subscript {
@@ -123,46 +164,5 @@ nav ul li a {
     margin-bottom: 10px;
 }
 
-/* --------------------------------------- */
-
-/* Sidebar */
-.sidebar {
-    height: 100%;
-    width: 250px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: #333;
-    padding: 20px;
-    color: #fff; 
-}
-
-.sidebar h2 {
-    margin-bottom: 20px;
-}
-
-.sidebar ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.sidebar ul li {
-    margin-bottom: 10px;
-}
-
-.sidebar ul li a {
-    color: #fff; 
-    text-decoration: none;
-}
-
-.sidebar ul li a:hover {
-    text-decoration: underline;
-}
-
-
-.content {
-    margin-left: 270px; 
-    padding: 20px;
-}
 /* --------------------------------------- */
 

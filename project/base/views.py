@@ -212,11 +212,17 @@ def data_visualization(request):
 def view_applicant_table(request):
     StudentRecords = CollegeStudentApplication.objects.all()
 
+    excluded_course =  ("0", "Choose Course")
+    excluded_school = ("0", "Preferred School")
+
+    course_choice = [course for course in AddApplicantForm.COURSES_OFFERED if course != excluded_course]
+    school_choices = [school for school in AddApplicantForm.SCHOOL_CHOICES if school !=excluded_school]
+
     if not request.session.get('login_message_displayed', False):
         messages.success(request, "You have logged in successfully!")
         request.session['login_message_displayed'] = True
 
-    return render(request, 'applicant_list.html', {'StudentRecords': StudentRecords})
+    return render(request, 'applicant_list.html', {'StudentRecords': StudentRecords, 'course_choice': course_choice, 'school_choices': school_choices})
 
 def applicant_information(request, pk):
     if request.user.is_authenticated:
@@ -274,5 +280,12 @@ def navbar_user(request):
     return render(request, 'navbar.html', active_user)
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+#Sidebar
+
   
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
    

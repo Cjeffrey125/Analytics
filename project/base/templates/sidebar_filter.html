@@ -9,10 +9,60 @@
     <div class="sidebar">
         <h2>Filter</h2>
         <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Services</a></li>
-            <li><a href="#">Contact</a></li>
+            <li>
+                <label for="customRange1" class="form-label">Year</label>
+                <input type="range" class="form-range" id="customRange1">
+            </li>
+
+
+            <li>
+                <div class="card" style="width: 13rem;">
+                    <h5 class="card-title" style="position: sticky; top: 0; background: white; padding: 5px 20px; margin-bottom: 0;">Courses</h5>
+                    <div class="card-body" style="height: 200px; overflow-y: auto;">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                            <label class="form-check-label" for="flexCheckDefault">
+                                All
+                            </label>
+                            <br>
+            
+                            {% for course in course_choice %}
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                            <label class="form-check-label" for="flexCheckDefault">
+                                {{ course.1 }}
+                            </label>
+                            
+                            <br>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+            <li>
+                <div class="card" style="width: 13rem;">
+                    <h5 class="card-title" style="position: sticky; top: 0; background: white; padding: 5px 20px; margin-bottom: 0;">School</h5>
+                    <div class="card-body" style="height: 200px; overflow-y: auto;">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                            <label class="form-check-label" for="flexCheckDefault">
+                                All
+                            </label>
+                            <br>
+            
+                            {% for school in school_choices %}
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                            <label class="form-check-label" for="flexCheckDefault">
+                                {{ school.1 }}
+                            </label>
+                            
+                            <br>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </li>
+
         </ul>
     </div>
 
