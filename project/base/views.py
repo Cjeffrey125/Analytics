@@ -1,46 +1,83 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from project.forms import SignUpForm, AddApplicantForm, ExportForm, ExcelImportForm
+from project.forms import SignUpForm, AddApplicantForm, ExportForm, ApplicantUploadForm
 from .models import CollegeStudentApplication
 from django.db.models import Count
 from django.http import HttpResponse
 import csv
 
-from import_export.formats import base_formats
-from import_export.resources import ModelResource
-from tablib import Dataset
+import pandas as pd
+from import_export import resources
 
-class CollegeStudentApplicationResource(ModelResource):
+class CollegeStudentApplicationResource(resources.ModelResource):
     class Meta:
         model = CollegeStudentApplication
+        import_id_fields = ('Control Number',)
 
 #import ----------------------------------------------------------------------------------------------------------------------------------
+#problem fk nan&update
 def import_excel(request):
     if request.method == 'POST':
-        form = ExcelImportForm(request.POST, request.FILES)  # Get the form data
-
+        form = ApplicantUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            excel_file = request.FILES['excel_file']
-            data = Dataset()
+            file = request.FILES['file']
+            df = pd.read_excel(file, na_values=["N/A", "-", "Not Available"])
+            applicant_count = 0
 
-            data.load(excel_file.read(), format='xlsx')
+            for index, row in df.iterrows():
+                applicant = CollegeStudentApplication(
+                    control_number=row['Control Number'],
+                    last_name=row['Surname'],
+                    first_name=row['Firstname'],
+                    middle_name=row['Middlename'],
+                    address=row['Address'],
+                    gender=row['Gender'],
+                    date_of_birth=row['Date of Birth'],
+                    place_of_birth=row['Place of Birth'],
+                    contact_no=row['Contact No.'],
+                    email_address=row['Email Address'],
+                    school=row['Preferred School'],
+                    course=row['Desired Course'],
+                    gwa=row['GWA'],
+                    rank=row['Rank'],
+                    
+                    jhs=row['JHS'],
+                    jhs_address=row['JHS Address'],
+                    jhs_educational_provider=row['JHS Education Provider'],
 
-  
-            resource = CollegeStudentApplicationResource()
-            result = resource.import_data(data, dry_run=False)
+                    shs=row['SHS'],
+                    shs_address=row['SHS Address'],
+                    shs_educational_provider=row['SHS Education Provider'],
 
-            if result.has_errors():
-   
-                pass
-            else:
-            
-                return render(request, 'import_success.html')
+                    father_name=row['Father Name'],
+                    father_voter_status=row['Father Voter Status'],
+                    father_educational_attainment=row['Father Educational Attainment'],
+                    father_employer=row['Father Employer'],
+                    father_occupation=row['Father Occupation'],
+
+                    mother_name=row['Mother Name'],
+                    mother_voter_status=row['Mother Voter Status'],
+                    mother_educational_attainment=row['Mother Educational Attainment'],
+                    mother_employer=row['Mother Employer'],
+                    mother_occupation=row['Mother Occupation'],
+
+                    guardian_name=row['Legal Guardian'],
+                    guardian_voter_status=row['Guardian Voter Status'],
+                    guardian_educational_attainment=row['Guardian Educational Attainment'],
+                    guardian_employer=row['Guardian Employer'],
+                    guardian_occupation=row['Guardian Occupation'],
+                )
+                applicant.save()
+                applicant_count += 1
+
+            messages.success(request, f'{applicant_count} applicant(s) imported successfully.')
+            return redirect('applicant_list')
     
     else:
-        form = ExcelImportForm()
-        
+        form = ApplicantUploadForm()
     return render(request, 'import.html', {'form': form})
+
 #-----------------------------------------------------------------------------
 
  

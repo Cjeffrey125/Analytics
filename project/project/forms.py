@@ -3,8 +3,8 @@ from django.contrib.auth.models import User
 from django import forms
 from base.models import CollegeStudentApplication
 
-class ExcelImportForm(forms.Form):
-    excel_file = forms.FileField(label='Select an Excel file')
+class ApplicantUploadForm(forms.Form):
+    file = forms.FileField()
 
 class SignUpForm(UserCreationForm):
     email = forms.EmailField(label = "", widget = forms.TextInput(attrs = {'class':'form-control', 'placeholder':'Email Address'}))

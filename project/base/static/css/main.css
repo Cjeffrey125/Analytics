@@ -125,7 +125,44 @@ nav ul li a {
 
 /* --------------------------------------- */
 
-/* Table Dropdown */
+/* Sidebar */
+.sidebar {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #333;
+    padding: 20px;
+    color: #fff; 
+}
+
+.sidebar h2 {
+    margin-bottom: 20px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 10px;
+}
+
+.sidebar ul li a {
+    color: #fff; 
+    text-decoration: none;
+}
+
+.sidebar ul li a:hover {
+    text-decoration: underline;
+}
 
 
-  /* --------------------------------------- */
+.content {
+    margin-left: 270px; 
+    padding: 20px;
+}
+/* --------------------------------------- */
+

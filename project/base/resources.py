@@ -43,8 +43,6 @@ class CollegeStudentApplicationResource(resources.ModelResource):
     guardian_occupation = fields.Field(column_name='Guardian Occupation', attribute ='guardian_occupation')
     guardian_employer = fields.Field(column_name= 'Guardian Employer', attribute = 'guardian_employer')
 
-    
-
     def dehydrate_date_of_birth(self, obj):
         try:
             return parse_date(obj.date_of_birth)
