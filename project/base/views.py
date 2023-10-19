@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from project.forms import SignUpForm, AddApplicantForm, ExportForm, ApplicantUploadForm
-from .models import CollegeStudentApplication
+from .models import CollegeStudentApplication, CollegeRequirements
 from django.db.models import Count
 from django.http import HttpResponse
 import csv
@@ -210,28 +210,35 @@ def data_visualization(request):
 
 #CRUD
 def view_applicant_table(request):
-    StudentRecords = CollegeStudentApplication.objects.all()
+    records = CollegeStudentApplication.objects.all()
 
+#sidebar filter---------------------------------------------------------------------------------------------
     excluded_course =  ("0", "Choose Course")
     excluded_school = ("0", "Preferred School")
 
     course_choice = [course for course in AddApplicantForm.COURSES_OFFERED if course != excluded_course]
     school_choices = [school for school in AddApplicantForm.SCHOOL_CHOICES if school !=excluded_school]
+#sidebar filter---------------------------------------------------------------------------------------------
 
     if not request.session.get('login_message_displayed', False):
         messages.success(request, "You have logged in successfully!")
         request.session['login_message_displayed'] = True
 
-    return render(request, 'applicant_list.html', {'StudentRecords': StudentRecords, 'course_choice': course_choice, 'school_choices': school_choices})
+    return render(request, 'applicant_list.html', {'records': records, 'course_choice': course_choice, 'school_choices': school_choices})
 
 def applicant_information(request, pk):
     if request.user.is_authenticated:
-        StudentRecords = CollegeStudentApplication.objects.get(id = pk)
-        return render (request, 'applicants_info.html',{'StudentRecords': StudentRecords})
+        try:
+            records = CollegeStudentApplication.objects.get(id=pk)
+            requirements = CollegeRequirements.objects.filter(control=records)
+        except CollegeStudentApplication.DoesNotExist:
+            records = None
+            requirements = []
+
+        return render(request, 'applicants_info.html', {'records': records, 'requirements': requirements})
     else:
-        messages.success(request, "You need to be Logged in to see this Data!")
+        messages.success(request, "You need to be logged in to see this data!")
         return redirect('home')
-    
 
 def delete_information(request, pk):
     if request.user.is_authenticated:
@@ -270,7 +277,16 @@ def update_information(request, pk):
     else:
         messages.error(request, "You need to be logged in for this process.")
         return redirect('home')
-  
+    
+#Requirements~~
+def requirements_view(request, control_number):
+    if request.user.is_authenticated:
+        requirements = CollegeRequirements.objects.filter(control__control_number=control_number)
+
+        return render(request, 'requirement.html', {'requirements': requirements, 'control_number': control_number})
+    else:
+        messages.error(request, "You need to be logged in for this process.")
+        return redirect('home')
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         
 #Navbar

@@ -4,6 +4,8 @@ class CollegeStudentApplication(models.Model):
 
     control_number = models.CharField(unique=True, max_length=50)
 
+    status = models.CharField(max_length=10, default="Processing")
+
     #personal data
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -53,6 +55,33 @@ class CollegeStudentApplication(models.Model):
 
     def __str__(self):
         return f"{self.last_name}, {self.first_name} {self.middle_name}"
+    
+    def save(self, *args, **kwargs):
+        created = not self.pk  
+        super().save(*args, **kwargs) 
+
+        if created:
+            CollegeRequirements.objects.create(control=self)
+
+    
+    
+class CollegeRequirements(models.Model):
+    control = models.ForeignKey(CollegeStudentApplication, on_delete=models.CASCADE)
+
+    control_number = models.CharField(max_length=50, default='')
+
+    req_1 =  models.CharField(max_length=100, default='True')
+    req_2 = models.CharField(max_length=100, default='True')
+
+    def __str__(self):
+        return f"Requirements for Application {self.control, self.control_number}"
+    
+    def save(self, *args, **kwargs):
+        if not self.control_number:
+            self.control_number = self.control.control_number
+        super().save(*args, **kwargs)
+
+    
     
 
 class CollegeStudentAccepted(models.Model):

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>College Requirements</h1>
+<ul>
+    {% for requirement in requirements %}
+    
+        <strong>Control Number:</strong> {{ requirement.control_number }}<br>
+        <strong>Requirement 1:</strong> {{ requirement.req_1 }}<br>
+        <strong>Requirement 2:</strong> {{ requirement.req_2 }}<br>
+    
+    {% endfor %}
+</ul>
+
+<button class="btn btn-secondary" onclick="goBack()">Go Back</button>
+
+<script>
+function goBack() {
+    window.history.back();
+}
+</script>
+
+{% endblock %}

@@ -17,7 +17,7 @@
           <a href="{% url 'import' %}" class="btn btn-secondary" data-toggle="modal" data-target="#exportModal">Import Table</a>
         </div>
 
-        {% if StudentRecords %} 
+        {% if records %} 
           <br/>   
           <table class="table table-light table-hover">
             <thead class="table-dark">
@@ -30,14 +30,14 @@
               </tr>
             </thead>
             <tbody>
-              {% for student_record in StudentRecords %}
-                <tr>
-                  <td><a href="{% url 'student_info' student_record.id %}">{{ student_record.control_number }}</a></td>
-                  <td>{{ student_record }}</td>
-                  <td>{{ student_record.school }}</td>
-                  <td>{{ student_record.course }}</td>
-                  <td>{{ student_record.status }}</td>
-                </tr>
+              {% for applicant_record in records %}
+              <tr onclick="window.location='{% url 'applicant_info' applicant_record.id %}';" style="cursor: pointer;">
+                  <td>{{ applicant_record.control_number }}</td>
+                  <td>{{ applicant_record }}</td>
+                  <td>{{ applicant_record.school }}</td>
+                  <td>{{ applicant_record.course }}</td>
+                  <td>{{ applicant_record.status }}</td>
+              </tr>
               {% endfor %}    
             </tbody>
           </table>

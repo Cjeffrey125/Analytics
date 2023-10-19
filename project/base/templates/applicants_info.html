@@ -2,7 +2,10 @@
 
 {% block content %}
 
-<h1>Student Records</h1>
+<div>
+    <h1 style="display: inline-block;">Student Records</h1>
+    <a href="{% url 'requirements' records.control_number %}" class="btn btn-secondary" style="float: right;">View Requirements</a>
+</div>
 
 <div class="card">
     <div class="card-header text-center align-middle">
@@ -10,31 +13,31 @@
     </div>
     <div class = "card-body">
         <p class ="card-text">
-        {{ StudentRecords.control_number }}<br/>
+        {{ records.control_number }}<br/>
         <!-- personal data -->
-        <p>Name : {{ StudentRecords }} </p>
+        <p>Name : {{ records }} </p>
     
-        <p>Address : {{ StudentRecords.address }} </p>
+        <p>Address : {{ records.address }} </p>
 
-        <p>Gender : {{ StudentRecords.gender }}</p>
-        <p>Date of Birth : {{ StudentRecords.date_of_birth }}</p>
-        <p>Place of Birth : {{ StudentRecords.place_of_birth }}</p>
-        <p>Contact No : {{ StudentRecords.contact_no }}</p>
+        <p>Gender : {{ records.gender }}</p>
+        <p>Date of Birth : {{ records.date_of_birth }}</p>
+        <p>Place of Birth : {{ records.place_of_birth }}</p>
+        <p>Contact No : {{ records.contact_no }}</p>
         
-        <p>Email Address : {{ StudentRecords.email_address }}</p>
-        <p>School : {{ StudentRecords.school }}</p>
+        <p>Email Address : {{ records.email_address }}</p>
+        <p>School : {{ records.school }}</p>
 
-        <p>Course : {{ StudentRecords.course }}</p>
-        <p>General Weighted Average : {{ StudentRecords.gwa }}</p>
-        <p>Rank : {{ StudentRecords.rank }}</p>
+        <p>Course : {{ records.course }}</p>
+        <p>General Weighted Average : {{ records.gwa }}</p>
+        <p>Rank : {{ records.rank }}</p>
 
-        <p>Junior High School : {{ StudentRecords.jhs }}</p>
-        <p>Junior High School Address : {{ StudentRecords.jhs_address }}</p>
-        <p>Educational Provider : {{ StudentRecords.jhs_educational_provider }}</p>
+        <p>Junior High School : {{ records.jhs }}</p>
+        <p>Junior High School Address : {{ records.jhs_address }}</p>
+        <p>Educational Provider : {{ records.jhs_educational_provider }}</p>
 
-        <p>Senior High School : {{ StudentRecords.shs }}<br/>
-        <p>Senior High School Address: {{ StudentRecords.shs_address }}<br/>
-        <p>Educational Provider : {{ StudentRecords.shs_educational_provider }}<br/>
+        <p>Senior High School : {{ records.shs }}<br/>
+        <p>Senior High School Address: {{ records.shs_address }}<br/>
+        <p>Educational Provider : {{ records.shs_educational_provider }}<br/>
 
         </p>
     </div>
@@ -46,23 +49,23 @@
     <div class = "card-body">
         <p>
             <!-- family data -->
-            <p>Voter Status : {{ StudentRecords.father_voter_status }}</p>
-            <p>Father Name : {{ StudentRecords.father_name }}</p>
-            <p>Educational Attainment : {{ StudentRecords.father_educational_attainment }}</p>
-            <p>Occupation : {{ StudentRecords.father_occupation }}</p>
-            <p>Employer Name : {{ StudentRecords.father_employer }}</p>
+            <p>Voter Status : {{ records.father_voter_status }}</p>
+            <p>Father Name : {{ records.father_name }}</p>
+            <p>Educational Attainment : {{ records.father_educational_attainment }}</p>
+            <p>Occupation : {{ records.father_occupation }}</p>
+            <p>Employer Name : {{ records.father_employer }}</p>
 
-            <p>Voter Status : {{ StudentRecords.mother_voter_status }}</p>
-            <p>Mother Name : {{ StudentRecords.mother_name }}</p>
-            <p>Educational Attainment : {{ StudentRecords.mother_educational_attainment }}</p>
-            <p>Occupation : {{ StudentRecords.mother_occupation }}</p>
-            <p>Employer Name : {{ StudentRecords.mother_employer }}</p>
+            <p>Voter Status : {{ records.mother_voter_status }}</p>
+            <p>Mother Name : {{ records.mother_name }}</p>
+            <p>Educational Attainment : {{ records.mother_educational_attainment }}</p>
+            <p>Occupation : {{ records.mother_occupation }}</p>
+            <p>Employer Name : {{ records.mother_employer }}</p>
 
-            <p>Voter Status : {{ StudentRecords.guardian_voter_status }}</p>
-            <p>Guardian Name : {{ StudentRecords.guardian_name }}</p>
-            <p>Educational Attainment : {{ StudentRecords.guardian_educational_attainment }}</p>
-            <p>Occupation : {{ StudentRecords.guardian_occupation }}</p>
-            <p>Employer Name : {{ StudentRecords.guardian_employer }}</p>
+            <p>Voter Status : {{ records.guardian_voter_status }}</p>
+            <p>Guardian Name : {{ records.guardian_name }}</p>
+            <p>Educational Attainment : {{ records.guardian_educational_attainment }}</p>
+            <p>Occupation : {{ records.guardian_occupation }}</p>
+            <p>Employer Name : {{ records.guardian_employer }}</p>
         </p>
     </div>
 
@@ -70,8 +73,8 @@
 
 <br/> <br/>
 <a href = "{% url 'applicant_list' %}" class="btn btn-secondary">Back</a>
-<a href = "{% url 'update_record' StudentRecords.id  %}" class="btn btn-secondary">Update Record</a>
-<a href = "{% url 'delete_record' StudentRecords.id  %}" class="btn btn-danger">Delete Record</a>
+<a href = "{% url 'update_record' records.id  %}" class="btn btn-secondary">Update Record</a>
+<a href = "{% url 'delete_record' records.id  %}" class="btn btn-danger">Delete Record</a>
 
 
 
