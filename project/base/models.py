@@ -70,19 +70,29 @@ class CollegeRequirements(models.Model):
 
     control_number = models.CharField(max_length=50, default='')
 
-    req_1 =  models.CharField(max_length=100, default='True')
-    req_2 = models.CharField(max_length=100, default='True')
+    req_a = models.CharField(max_length=100, default='False')
+    req_b = models.CharField(max_length=100, default='False')
+    req_c = models.CharField(max_length=100, default='False')
+    req_d = models.CharField(max_length=100, default='False')
+    req_e = models.CharField(max_length=100, default='False')
+    req_f = models.CharField(max_length=100, default='False')
+    req_g = models.CharField(max_length=100, default='False')
+    req_h = models.CharField(max_length=100, default='False')
+    req_i = models.CharField(max_length=100, default='False')
+    req_j = models.CharField(max_length=100, default='False')
+    req_k = models.CharField(max_length=100, default='False')
+    req_l = models.CharField(max_length=100, default='False')
+    req_m = models.CharField(max_length=100, default='False')
 
+    approved = models.BooleanField(default=False)  
     def __str__(self):
         return f"Requirements for Application {self.control, self.control_number}"
-    
+
     def save(self, *args, **kwargs):
         if not self.control_number:
             self.control_number = self.control.control_number
         super().save(*args, **kwargs)
 
-    
-    
 
 class CollegeStudentAccepted(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)

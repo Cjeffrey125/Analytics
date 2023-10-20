@@ -281,12 +281,24 @@ def update_information(request, pk):
 #Requirements~~
 def requirements_view(request, control_number):
     if request.user.is_authenticated:
-        requirements = CollegeRequirements.objects.filter(control__control_number=control_number)
+        if request.method == 'POST':
+            requirements = CollegeRequirements.objects.filter(control__control_number=control_number)
+            for requirement in requirements:
+                for requirement_field in ('req_a', 'req_b', 'req_c', 'req_d', 'req_e', 'req_f', 'req_g', 'req_h', 'req_i', 'req_j', 'req_k', 'req_l', 'req_m'):
+                    checkbox_name = f'{requirement_field}_{requirement.id}'
+                    approved = checkbox_name in request.POST
+                    setattr(requirement, requirement_field, 'True' if approved else 'False')
+                requirement.save()
 
+            messages.success(request, "Requirements have been updated!!")
+            return redirect("applicant_list")
+
+        requirements = CollegeRequirements.objects.filter(control__control_number=control_number)
         return render(request, 'requirement.html', {'requirements': requirements, 'control_number': control_number})
     else:
         messages.error(request, "You need to be logged in for this process.")
         return redirect('home')
+
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         
 #Navbar

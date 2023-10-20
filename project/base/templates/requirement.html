@@ -1,19 +1,191 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<h1>College Requirements</h1>
-<ul>
-    {% for requirement in requirements %}
-    
-        <strong>Control Number:</strong> {{ requirement.control_number }}<br>
-        <strong>Requirement 1:</strong> {{ requirement.req_1 }}<br>
-        <strong>Requirement 2:</strong> {{ requirement.req_2 }}<br>
-    
-    {% endfor %}
-</ul>
-
 <button class="btn btn-secondary" onclick="goBack()">Go Back</button>
+<h1>College Requirements</h1>
+    <form method="post">
+        {% csrf_token %}
+    
+        {% for requirement in requirements %}
+            User Control Number: <strong>{{ requirement.control_number }}</strong>
+            <table class="table table-light table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">Requirements</th>
+                        <th scope="col">Approval</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                    type="checkbox" 
+                                    {% if requirement.req_a == 'True' %} checked="checked" {% endif %}
+                                    name="req_a_{{ requirement.id }}">
+                            </div>
+                        </td>
+                        <td>A. Duly accomplished Application Form; (ORIGINAL)</td>
+                       
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                    type="checkbox" 
+                                    {% if requirement.req_b == 'True' %} checked="checked" {% endif %}
+                                    name="req_b_{{ requirement.id }}">
+                            </div>
+                        </td>
+                        <td>B. Cerificate of Academic Standing with General Weighted Average and Rank issued by DepEd Senior High School in the City of Biñan; (ORIGINAL)</td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                    type="checkbox" 
+                                    {% if requirement.req_c == 'True' %} checked="checked" {% endif %}
+                                    name="req_c_{{ requirement.id }}">
+                            </div>
+                        </td>
+                        <td>C. Certificate of Good Moral Character issued by DepEd Senior High School; (PHOTOCOPY)</td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                    type="checkbox" 
+                                    {% if requirement.req_d == 'True' %} checked="checked" {% endif %}
+                                    name="req_d_{{ requirement.id }}">
+                            </div>
+                        </td>
+                        <td>D. Certificate of Completion (Moving-Up) issued by DepEd Junior High School in the City of Biñan; (PHOTOCOPY)</td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                    type="checkbox" 
+                                    {% if requirement.req_e == 'True' %} checked="checked" {% endif %}
+                                    name="req_e_{{ requirement.id }}">
+                            </div>
+                        </td>
+                        <td>E. Certificate of Indigency issued by the Barangay Chairman with attached Actual Photo of Residence; (PHOTOCOPY)</td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                    type="checkbox" 
+                                    {% if requirement.req_f == 'True' %} checked="checked" {% endif %}
+                                    name="req_f_{{ requirement.id }}">
+                            </div>
+                        </td>
+                        <td>F. Recent 2x2 1.D. picture attached in the INB Application Forn; (1 COPY)</td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                    type="checkbox" 
+                                    {% if requirement.req_g == 'True' %} checked="checked" {% endif %}
+                                    name="req_g_{{ requirement.id }}">
+                            </div>
+                        </td>
+                        <td>G. PSA Birth Certificate; (PHOTOCOPY)</td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                    type="checkbox" 
+                                    {% if requirement.req_h == 'True' %} checked="checked" {% endif %}
+                                    name="req_h_{{ requirement.id }}">
+                            </div>
+                        </td>
+                        <td>H. Voter's Certification of BOTH PARENTS/GUARDIANS & GRANTEE who are at the voting age requirement; (PHOTOCOPY)</td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                    type="checkbox" 
+                                    {% if requirement.req_i == 'True' %} checked="checked" {% endif %}
+                                    name="req_i_{{ requirement.id }}">
+                            </div>
+                        </td>
+                        <td>I. Latest Report Card / Form 138; (PHOTOCOPY)</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                    type="checkbox" 
+                                    {% if requirement.req_j == 'True' %} checked="checked" {% endif %}
+                                    name="req_j_{{ requirement.id }}">
+                            </div>
+                        </td>
+                        <td>J. Income Tax Return (ifemployed) or Certificate of No Fix Income of Parents/Guardians issued by BIR; (PHOTOCOPY)</td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                    type="checkbox" 
+                                    {% if requirement.req_k == 'True' %} checked="checked" {% endif %}
+                                    name="req_k_{{ requirement.id }}">
+                            </div>
+                        </td>
+                        <td>K. Grade 6 Diploma / Certificate of Graduation (for under guardianship); (PHOTOCOPY)</td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                    type="checkbox" 
+                                    {% if requirement.req_l == 'True' %} checked="checked" {% endif %}
+                                    name="req_l_{{ requirement.id }}">
+                            </div>
+                        </td>
+                        <td>L. Death Certificate (for deceased parent/s); (PHOTOCOPY)</td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                    type="checkbox" 
+                                    {% if requirement.req_m == 'True' %} checked="checked" {% endif %}
+                                    name="req_m_{{ requirement.id }}">
+                            </div>
+                        </td>
+                        <td>M. Solo Parent ID (for solo parent); (PHOTOCOPY)</td>
+                    </tr>
+
+
+                </tbody>
+            </table>
+        {% endfor %}
+        
+        <div class="row justify-content-end">
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </div>        
+    </form>
+
+
 
 <script>
 function goBack() {
