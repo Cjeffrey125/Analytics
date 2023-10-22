@@ -107,8 +107,10 @@ class AddApplicantForm(forms.ModelForm):
             ("Registered Voter", "Registered Voter"),
             ("Not Registered Voter", "Not Registered Voter"),
         ]
+        
 
         control_number = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Control Number", "class":"form-control"}), label="")
+
         
         #Personal Data
         first_name = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"class":"form-control"}), help_text='<span class="subscript">First Name</span>', label="")

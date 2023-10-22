@@ -15,6 +15,10 @@ class CollegeStudentApplicationResource(resources.ModelResource):
         model = CollegeStudentApplication
         import_id_fields = ('Control Number',)
 
+
+def home(request):
+        return render(request, 'home.html', {})
+
 #import ----------------------------------------------------------------------------------------------------------------------------------
 #problem fk nan&update
 def import_excel(request):
@@ -135,10 +139,6 @@ def csv_record(request):
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
-def home(request):
-        return render(request, 'home.html', {})
-
 # Login  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 def login_user(request):
     if request.method == 'POST':
@@ -211,20 +211,21 @@ def data_visualization(request):
 #CRUD
 def view_applicant_table(request):
     records = CollegeStudentApplication.objects.all()
+    requirement_records = CollegeRequirements.objects.all()  # Fetch all requirement records
 
-#sidebar filter---------------------------------------------------------------------------------------------
+    #sidebar filter---------------------------------------------------------------------------------------------
     excluded_course =  ("0", "Choose Course")
     excluded_school = ("0", "Preferred School")
 
     course_choice = [course for course in AddApplicantForm.COURSES_OFFERED if course != excluded_course]
-    school_choices = [school for school in AddApplicantForm.SCHOOL_CHOICES if school !=excluded_school]
-#sidebar filter---------------------------------------------------------------------------------------------
+    school_choices = [school for school in AddApplicantForm.SCHOOL_CHOICES if school != excluded_school]
+    #sidebar filter---------------------------------------------------------------------------------------------
 
     if not request.session.get('login_message_displayed', False):
         messages.success(request, "You have logged in successfully!")
         request.session['login_message_displayed'] = True
 
-    return render(request, 'applicant_list.html', {'records': records, 'course_choice': course_choice, 'school_choices': school_choices})
+    return render(request, 'applicant_list.html', {'records': zip(records, requirement_records), 'course_choice': course_choice, 'school_choices': school_choices})
 
 def applicant_information(request, pk):
     if request.user.is_authenticated:
@@ -309,11 +310,3 @@ def navbar_user(request):
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-#Sidebar
-
-  
-#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-   

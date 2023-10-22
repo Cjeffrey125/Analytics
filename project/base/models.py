@@ -4,8 +4,6 @@ class CollegeStudentApplication(models.Model):
 
     control_number = models.CharField(unique=True, max_length=50)
 
-    status = models.CharField(max_length=10, default="Processing")
-
     #personal data
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -52,7 +50,6 @@ class CollegeStudentApplication(models.Model):
     guardian_occupation = models.CharField(max_length=100, default='')
     guardian_employer = models.CharField(max_length=100, default='')
 
-
     def __str__(self):
         return f"{self.last_name}, {self.first_name} {self.middle_name}"
     
@@ -62,13 +59,12 @@ class CollegeStudentApplication(models.Model):
 
         if created:
             CollegeRequirements.objects.create(control=self)
+            
 
-    
-    
 class CollegeRequirements(models.Model):
     control = models.ForeignKey(CollegeStudentApplication, on_delete=models.CASCADE)
-
     control_number = models.CharField(max_length=50, default='')
+    requirement = models.IntegerField(default=0)
 
     req_a = models.CharField(max_length=100, default='False')
     req_b = models.CharField(max_length=100, default='False')
@@ -84,18 +80,23 @@ class CollegeRequirements(models.Model):
     req_l = models.CharField(max_length=100, default='False')
     req_m = models.CharField(max_length=100, default='False')
 
-    approved = models.BooleanField(default=False)  
+    approved = models.BooleanField(default=False)
+    
     def __str__(self):
         return f"Requirements for Application {self.control, self.control_number}"
 
     def save(self, *args, **kwargs):
         if not self.control_number:
             self.control_number = self.control.control_number
+
+        requirement_fields = [self.req_a, self.req_b, self.req_c, self.req_d, self.req_e, self.req_f,
+                             self.req_g, self.req_h, self.req_i, self.req_j, self.req_k, self.req_l, self.req_m]
+        self.requirement = sum(1 for field in requirement_fields if field.strip() == 'True')
+
         super().save(*args, **kwargs)
 
 
 class CollegeStudentAccepted(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
 
     control_number = models.IntegerField(default=0) 
     fullname = models.CharField(max_length=50)
@@ -105,7 +106,8 @@ class CollegeStudentAccepted(models.Model):
     grants = models.CharField(max_length=10, default='')
     semester = models.CharField(max_length=10, default='')
     remarks = models.CharField(max_length=50, default='')
-    # grades??????
+
+    # grade is seperate table
 
 class CollegeStudentRejected(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
