@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Applicant Information</h1>
+
+    <p>Control Number: {{ failed_applicant.control_number }}</p>
+    <p>Name: {{ failed_applicant.fullname }}</p>
+    <p>School: {{ failed_applicant.school }}</p>
+    <p>Course: {{ failed_applicant.course }}</p>
+
+    
+    <a href="{% url 'delete_record' failed_applicant.control_number 'failed' %}" class="btn btn-danger">Delete Failed Applicant</a>
+
+    <a href="{% url 'failed_applicant' %}" class="btn btn-secondary">Back to Applicant List</a>
+</div>
+{% endblock %}

@@ -2,11 +2,10 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from project.forms import SignUpForm, AddApplicantForm, ExportForm, ApplicantUploadForm
-from .models import CollegeStudentApplication, CollegeRequirements
+from .models import CollegeStudentApplication, CollegeRequirements, CollegeStudentAccepted, CollegeStudentRejected
 from django.db.models import Count
 from django.http import HttpResponse
 import csv
-
 import pandas as pd
 from import_export import resources
 
@@ -208,10 +207,37 @@ def data_visualization(request):
     return render(request, 'dashboard.html', {'labels': labels, 'data': data, 'count': total_students, 'students_per_school': students_per_school})
 #  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+
+def filter_applicants(request):
+    accepted_applicants = CollegeStudentApplication.objects.filter(
+        collegerequirements__requirement=13
+    ).distinct()
+
+    rejected_applicants = CollegeStudentApplication.objects.exclude(
+        collegerequirements__requirement=13
+    ).distinct()
+
+    for applicant in accepted_applicants:
+        CollegeStudentAccepted.objects.create(
+            control_number=applicant.control_number,
+            fullname=f"{applicant.first_name} {applicant.last_name}",
+        )
+
+    for applicant in rejected_applicants:
+        CollegeStudentRejected.objects.create(
+            control_number=applicant.control_number,
+            fullname=f"{applicant.first_name} {applicant.last_name}",
+        )
+
+    messages.success(request, "Applicants have been successfully filtered.")
+
+    return redirect('applicant_list') 
+#------------------------------------------------------------------------------------------------------------------------
+
 #CRUD
 def view_applicant_table(request):
     records = CollegeStudentApplication.objects.all()
-    requirement_records = CollegeRequirements.objects.all()  # Fetch all requirement records
+    requirement_records = CollegeRequirements.objects.all()  
 
     #sidebar filter---------------------------------------------------------------------------------------------
     excluded_course =  ("0", "Choose Course")
@@ -227,6 +253,53 @@ def view_applicant_table(request):
 
     return render(request, 'applicant_list.html', {'records': zip(records, requirement_records), 'course_choice': course_choice, 'school_choices': school_choices})
 
+
+#------------------------------------------------------------------------------------------------------------------------
+#needs to be refactored
+def passed_applicant(request):
+    if request.user.is_authenticated:
+        applicants = CollegeStudentAccepted.objects.all()
+        return render(request, 'accepted_applicants.html', {'applicants': applicants})
+    else:
+        messages.error(request, "You don't have permission.")
+        return redirect('home')
+    
+def passed_applicant_info(request, control_number):
+    if request.user.is_authenticated:
+        try:
+            passed_applicant = CollegeStudentAccepted.objects.get(control_number=control_number)
+            return render(request, 'passed_info.html', {'passed_applicant': passed_applicant})
+        except CollegeStudentAccepted.DoesNotExist:
+            messages.error(request, "Passed applicant not found.")
+            return redirect('passed_applicant')
+    else:
+        messages.error(request, "You don't have permission.")
+        return redirect('home')
+    
+def failed_applicant_info(request, control_number):
+    if request.user.is_authenticated:
+        try:
+            failed_applicant = CollegeStudentRejected.objects.get(control_number=control_number)
+            return render(request, 'failed_info.html', {'failed_applicant': failed_applicant})
+        except CollegeStudentAccepted.DoesNotExist:
+            messages.error(request, "Failed applicant not found.")
+            return redirect('passed_applicant')
+    else:
+        messages.error(request, "You don't have permission.")
+        return redirect('home')
+    
+def rejected_applicant(request):
+    if request.user.is_authenticated:
+        applicants = CollegeStudentRejected.objects.all()
+        return render(request, 'rejected_applicants.html', {'applicants': applicants})
+    else:
+        messages.error(request, "You don't have permission.")
+        return redirect('home')
+        
+
+
+#------------------------------------------------------------------------------------------------------------------------
+
 def applicant_information(request, pk):
     if request.user.is_authenticated:
         try:
@@ -241,16 +314,32 @@ def applicant_information(request, pk):
         messages.success(request, "You need to be logged in to see this data!")
         return redirect('home')
 
-def delete_information(request, pk):
+def delete_record(request, pk, model_name):
     if request.user.is_authenticated:
-        delete_record = CollegeStudentApplication.objects.get(id = pk)
-        delete_record.delete()
-        messages.success(request, "Record has been deleted")
-        return redirect('applicant_list')
+        if model_name == 'application':
+            model = CollegeStudentApplication
+            list_view = 'applicant_list'
+        elif model_name == 'passed':
+            model = CollegeStudentAccepted
+            list_view = 'passed_applicant'
+        elif model_name == 'failed':
+            model = CollegeStudentRejected
+            list_view = 'failed_applicant'
+        else:
+            messages.error(request, "Invalid model name")
+            return render(request, 'error_page.html', {'message': "Invalid model name provided"})
+
+        try:
+            record = model.objects.get(control_number=pk)
+            record.delete()
+            messages.success(request, f"Record for {model_name.capitalize()} has been deleted")
+        except model.DoesNotExist:
+            messages.error(request, f"{model_name.capitalize()} record not found")
+
+        return redirect(list_view)
     else:
-        messages.success(request, "You need to be Logged in for this process")
+        messages.error(request, "You need to be logged in for this process")
         return redirect('home')
-    
 
 def add_information(request):  
     form =  AddApplicantForm(request.POST or None)

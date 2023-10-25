@@ -97,25 +97,29 @@ class CollegeRequirements(models.Model):
 
 
 class CollegeStudentAccepted(models.Model):
-
-    control_number = models.IntegerField(default=0) 
+    control_number = models.CharField(primary_key=True, max_length=50)
     fullname = models.CharField(max_length=50)
-    school_year = models.CharField(max_length=50)
-    course = models.CharField(max_length=50)
-    school = models.CharField(max_length=50)
-    grants = models.CharField(max_length=10, default='')
-    semester = models.CharField(max_length=10, default='')
-    remarks = models.CharField(max_length=50, default='')
-
-    # grade is seperate table
+    school_year = models.CharField(max_length=50, default='1st Years')
 
 class CollegeStudentRejected(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    control_number =  models.IntegerField(default=0) 
+    control_number = models.CharField(primary_key=True, max_length=50)
     fullname = models.CharField(max_length=50)
-    course = models.CharField(max_length=50)
-    school_year = models.CharField(max_length=50)
-    school = models.CharField(max_length=50)
-    remarks = models.CharField(max_length=50)
+
+
+
+
+    
+
+    #course = models.CharField(max_length=50)
+    #school_year = models.CharField(max_length=50)
+    #school = models.CharField(max_length=50)
+    #remarks = models.CharField(max_length=50)
+
+    #course = models.CharField(max_length=50)
+    #school = models.CharField(max_length=50)
+    #grants = models.CharField(max_length=10, default='')
+    #semester = models.CharField(max_length=10, default='')
+    #remarks = models.CharField(max_length=50, default='')
+
+    # grade is seperate table
 

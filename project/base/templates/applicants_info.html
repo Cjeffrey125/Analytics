@@ -48,7 +48,7 @@
 
     <div class = "card-body">
         <p>
-            <!-- family data -->
+        
             <p>Voter Status : {{ records.father_voter_status }}</p>
             <p>Father Name : {{ records.father_name }}</p>
             <p>Educational Attainment : {{ records.father_educational_attainment }}</p>
@@ -74,7 +74,7 @@
 <br/> <br/>
 <a href = "{% url 'applicant_list' %}" class="btn btn-secondary">Back</a>
 <a href = "{% url 'update_record' records.id  %}" class="btn btn-secondary">Update Record</a>
-<a href = "{% url 'delete_record' records.id  %}" class="btn btn-danger">Delete Record</a>
+<a href="{% url 'delete_record' records.control_number 'application' %}" class="btn btn-danger">Delete Application</a>
 
 
 
