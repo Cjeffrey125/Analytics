@@ -1,8 +1,8 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from project.forms import SignUpForm, AddApplicantForm, ExportForm, ApplicantUploadForm
-from .models import CollegeStudentApplication, CollegeRequirements, CollegeStudentAccepted, CollegeStudentRejected
+from project.forms import SignUpForm, AddApplicantForm, ExportForm, ApplicantUploadForm, AddFinancialAssistanceForm
+from .models import CollegeStudentApplication, CollegeRequirements, CollegeStudentAccepted, CollegeStudentRejected, FinancialAssistanceApplication
 from django.db.models import Count
 from django.http import HttpResponse
 import csv
@@ -48,7 +48,6 @@ def import_excel(request):
                     jhs=row['JHS'],
                     jhs_address=row['JHS Address'],
                     jhs_educational_provider=row['JHS Education Provider'],
-
                     shs=row['SHS'],
                     shs_address=row['SHS Address'],
                     shs_educational_provider=row['SHS Education Provider'],
@@ -253,6 +252,14 @@ def view_applicant_table(request):
 
     return render(request, 'applicant_list.html', {'records': zip(records, requirement_records), 'course_choice': course_choice, 'school_choices': school_choices})
 
+def financial_assistance_list(request):
+    if request.user.is_authenticated:
+        financial_assistance_data = FinancialAssistanceApplication.objects.all()
+        return render(request, 'assistance_applicant_list.html', {'financial_assistance_data': financial_assistance_data})
+    else:
+        messages.error(request, "You need to be logged in for this process.")
+        return redirect('home')
+
 
 #------------------------------------------------------------------------------------------------------------------------
 #needs to be refactored
@@ -341,15 +348,27 @@ def delete_record(request, pk, model_name):
         messages.error(request, "You need to be logged in for this process")
         return redirect('home')
 
-def add_information(request):  
-    form =  AddApplicantForm(request.POST or None)
+def add_information(request, form_type):
     if request.user.is_authenticated:
+        if form_type == 'applicant':
+            form = AddApplicantForm(request.POST or None)
+            template = 'add_record.html'
+            success_url = 'applicant_list'
+        elif form_type == 'financial_assistance':
+            form = AddFinancialAssistanceForm(request.POST or None)
+            template = 'assistance_add_applicant.html'
+            success_url = 'financial_assistance_list'
+        else:
+            messages.error(request, "Invalid form type.")
+            return redirect('home')
+
         if request.method == "POST":
             if form.is_valid():
-                add_record = form.save() 
+                add_record = form.save()
                 messages.success(request, "Record Successfully Added")
-                return redirect('applicant_list')  
-        return render(request, 'add_record.html', {'form': form}) 
+                return redirect(success_url)  
+
+        return render(request, template, {'form': form})
     else:
         messages.error(request, "You need to be logged in for this process.")
         return redirect('home')
@@ -380,7 +399,7 @@ def requirements_view(request, control_number):
                     setattr(requirement, requirement_field, 'True' if approved else 'False')
                 requirement.save()
 
-            messages.success(request, "Requirements have been updated!!")
+            messages.success(request, "Requirements have been updated!!") 
             return redirect("applicant_list")
 
         requirements = CollegeRequirements.objects.filter(control__control_number=control_number)

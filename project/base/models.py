@@ -105,11 +105,6 @@ class CollegeStudentRejected(models.Model):
     control_number = models.CharField(primary_key=True, max_length=50)
     fullname = models.CharField(max_length=50)
 
-
-
-
-    
-
     #course = models.CharField(max_length=50)
     #school_year = models.CharField(max_length=50)
     #school = models.CharField(max_length=50)
@@ -123,3 +118,63 @@ class CollegeStudentRejected(models.Model):
 
     # grade is seperate table
 
+
+
+
+#----------------------------------------------------------------------------------------------------------------------------
+class FinancialAssistanceApplication(models.Model): 
+
+    control_number = models.CharField(unique=True, max_length=50)
+
+    #personal data
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    middle_name = models.CharField(max_length=50, default='')  
+    suffix = models.CharField(max_length=50, default='')  
+
+    date_of_birth = models.DateField(default='01-01-2001')
+    place_of_birth = models.CharField(max_length=100, default='')
+    gender = models.CharField(max_length=50)
+    religion = models.CharField(max_length=100, default='')
+
+    address = models.CharField(max_length=100, default='Unknown')
+    email_address = models.EmailField(max_length=100, default='')
+    contact_no = models.CharField(max_length=25, default='')
+    general_average = models.DecimalField(max_digits=5, decimal_places=2, default=0.0) 
+    
+    school = models.CharField(max_length=100, default='')
+    school_address = models.CharField(max_length=100, default='')
+
+    track = models.CharField(max_length=100, default='')
+    strand = models.CharField(max_length=100, default='')
+    
+    
+    #family data
+    father_name = models.CharField(max_length=100, default='')
+    father_age = models.SmallIntegerField(default='')
+    father_occupation = models.CharField(max_length=100, default='')
+    father_employer = models.CharField(max_length=100, default='')
+    father_income = models.IntegerField(default='')
+
+    mother_name = models.CharField(max_length=100, default='')
+    mother_age = models.SmallIntegerField(default='')
+    mother_occupation = models.CharField(max_length=100, default='')
+    mother_employer = models.CharField(max_length=100, default='')
+    mother_income = models.IntegerField(default='')
+
+    sibling_count = models.SmallIntegerField(default='')
+
+    sibling_name = models.CharField(max_length=100, default='')
+    sibling_DOB = models.DateField(default='01-01-2001')
+    sibling_age = models.SmallIntegerField(default=0)
+    sibling_address = models.CharField(max_length=100, default='')
+
+
+    def __str__(self):
+        return f"{self.last_name}, {self.first_name} {self.middle_name}"
+
+
+
+    
+
+   

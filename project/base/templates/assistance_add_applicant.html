@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+
+{% load static %} 
+
+{% block content %}
+
+<link rel="stylesheet" type="text/css" href="{% static '/css/main.css' %}">
+
+    <h1>Add Record</h1>
+
+    <br/>
+    <form method="POST" action="{% url 'add_financial_assistance' %}">
+        {% csrf_token %}
+
+    <div class = "text-center">
+        <h3>Personal Data</h3>
+    </div>
+
+    <div class="form-group row">
+            <div class="col">
+            {{ form.control_number }}
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col">
+            {{ form.first_name }}
+            <div class="subscript">{{ form.first_name.help_text | safe }}</div>
+        </div>
+        <div class="col">
+            {{ form.last_name }}
+            <div class="subscript">{{ form.last_name.help_text | safe }}</div>
+        </div>
+        <div class="col">
+            {{ form.middle_name }}
+            <div class="subscript">{{ form.middle_name.help_text | safe }}</div>
+        </div>
+        <div class="col">
+            {{ form.suffix }}
+            <div class="subscript">{{ form.suffix.help_text | safe }}</div>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="input-group col">
+            {{ form.date_of_birth }}
+        </div>
+        <div class="col">
+            {{ form.place_of_birth }}
+        </div>
+        <div class="col">
+            {{ form.gender }}
+        </div>
+        <div class="col">
+            {{ form.religion }}
+        </div>
+    </div>
+
+    <div class="form-group row">
+    <div class="col">
+        {{ form.address }}
+        <div class="subscript">{{ form.address.help_text | safe }}</div>
+    </div>
+    <div class="col">
+        {{ form.email_address }}
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col">
+            {{ form.contact_no }}
+        </div>
+        <div class="col">
+            {{ form.general_average }}
+        </div>
+    </div>
+
+    <div class="form-group row"> 
+        <div class="col">
+            {{ form.school }}
+        </div>
+        <div class="col">
+            {{ form.school_address }}
+        </div>
+    </div>
+
+    <div class="form-group row"> 
+        <div class="col">
+            {{ form.track }}
+        </div>
+        <div class="col">
+            {{ form.strand }}
+        </div>
+    </div>
+
+
+    <div class="form-group row"> 
+        <div class="col">
+            {{ form.father_name.label_tag }}
+            {{ form.father_name }}
+        </div>
+        <div class="col">
+            {{ form.father_age.label_tag }}
+            {{ form.father_age }}
+        </div>
+        <div class="col">
+            {{ form.father_income.label_tag }}
+            {{ form.father_income }}
+        </div>
+    </div>
+
+    <div class="form-group row"> 
+        <div class="col">
+            {{ form.father_occupation.label_tag }}
+            {{ form.father_occupation }}
+        </div>
+        <div class="col">
+            {{ form.father_employer.label_tag }}
+            {{ form.father_employer }}
+        </div>
+    </div>
+
+    <div class="form-group row"> 
+        <div class="col">
+            {{ form.mother_name.label_tag }}
+            {{ form.mother_name }}
+        </div>
+        <div class="col">
+            {{ form.mother_age.label_tag }}
+            {{ form.mother_age }}
+        </div>
+        <div class="col">
+            {{ form.mother_income.label_tag }}
+            {{ form.mother_income }}
+        </div>
+    </div>
+
+    <div class="form-group row"> 
+        <div class="col">
+            {{ form.mother_occupation.label_tag }}
+            {{ form.mother_occupation }}
+        </div>
+        <div class="col">
+            {{ form.mother_employer.label_tag }}
+            {{ form.mother_employer }}
+        </div>
+    </div>
+   
+  
+   
+    <div class="form-group">
+      {{ form.sibling_count.label_tag }}
+      {{ form.sibling_count }}
+    </div>
+
+
+    <div class="form-group">
+        {{ form.sibling_name }}
+      </div>
+      <div class="input-group col">
+        {{ form.sibling_DOB }}
+      </div>
+      <div class="form-group">
+        {{ form.sibling_age.label_tag }}
+        {{ form.sibling_age }}
+      </div>
+      <div class="form-group">
+        {{ form.sibling_address.label_tag }}
+        {{ form.sibling_address }}
+      </div>
+  
+    <input type="submit" class="btn btn-primary" value="Submit">
+  </form>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var dateOfBirthSelect = document.getElementById("id_date_of_birth");
+        dateOfBirthSelect.addEventListener("change", function() {
+            dateOfBirthSelect.classList.remove("placeholder");
+        });
+    });
+</script>
+<style>
+    #id_date_of_birth.placeholder {
+        color: #6c757d;
+    }
+</style>
+
+{% endblock %}

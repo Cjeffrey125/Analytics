@@ -18,7 +18,15 @@
           
           {% if user.is_authenticated %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'dashboard' %}" style="color: black;">Overview</a>
+          <a class="nav-link" href="{% url 'dashboard' %}" style="color: black;">Dashboard</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'applicant_list' %}" style="color: black;">College</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'financial_assistance_list' %}" style="color: black;">Financial Assistance</a>
         </li>
 
         <img src="{% static 'images/profile.png' %}" class="user-pic" onclick="toggleMenu()">
