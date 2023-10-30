@@ -5,7 +5,9 @@
 <h1>College Requirements</h1>
     <form method="post">
         {% csrf_token %}
-    
+        
+        <button type="button" class="btn btn-primary" id="selectAll">Select All</button>
+
         {% for requirement in requirements %}
             User Control Number: <strong>{{ requirement.control_number }}</strong>
             <table class="table table-light table-hover">
@@ -191,6 +193,13 @@
 function goBack() {
     window.history.back();
 }
+
+document.getElementById('selectAll').addEventListener('click', function() {
+    var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(function(checkbox) {
+        checkbox.checked = true;
+    });
+});
 </script>
 
 {% endblock %}

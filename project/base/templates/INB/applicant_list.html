@@ -10,7 +10,6 @@
 
       <div class="main-content flex-grow-1">
         <h1>Applicant List</h1>
-        
         <div class="d-flex justify-content-end">
           <a href="{% url 'add_applicant' %}" class="btn btn-secondary">Add Applicant</a>
           <a href="{% url 'export' %}" class="btn btn-secondary" data-toggle="modal" data-target="#exportModal">Export Table</a>
@@ -19,12 +18,11 @@
           <form method="post" action="{% url 'filter_applicants' %}">
             {% csrf_token %}
             <button type="submit" class="btn btn-secondary">Filter Applicants</button>
-        </form>
-
+          </form>
         </div>
 
-        {% if records %} 
-          <br/>   
+        {% if records %}
+          <br/>
           <table class="table table-light table-hover">
             <thead class="table-dark">
               <tr>
@@ -49,23 +47,20 @@
                             {{requirement_record.requirement}}/13
                         {% endif %}
                   </td>
-        
               </tr>
               {% endfor %}
             </tbody>
           </table>
-
-          <div class="d-flex justify-content-end">
-            <a href="{% url 'passed_applicant' %}" class="btn btn-secondary">PassList</a>
-            <a href="{% url 'failed_applicant' %}" class="btn btn-secondary">FailList</a>
-          </div>
-
         {% else %}
           <div class="d-flex justify-content-center">
-            <h1>No student records found.</h1>
+            <h1>There are no applicants.</h1>
           </div>
         {% endif %}
         
+        <div class="d-flex justify-content-end">
+          <a href="{% url 'passed_applicant' %}" class="btn btn-secondary">PassList</a>
+          <a href="{% url 'failed_applicant' %}" class="btn btn-secondary">FailList</a>
+        </div>
       </div>
     </div>
   {% endif %}

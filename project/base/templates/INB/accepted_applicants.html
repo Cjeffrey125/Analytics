@@ -11,6 +11,7 @@
       <div class="main-content flex-grow-1">
         <h1>Passed Applicant </h1>
 
+      {% if applicants %}
         <table class="table table-light table-hover">
             <thead class="table-dark">
                 <tr>
@@ -38,5 +39,8 @@
           <h1>No student records found.</h1>
         </div>
       {% endif %}
+      </div>
+    </div>
+  {% endif %}
 
 {% endblock %}
