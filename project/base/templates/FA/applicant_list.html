@@ -12,10 +12,8 @@
         <h1>Applicant List</h1>
         <div class="d-flex justify-content-end">
           <a href="{% url 'add_applicant' %}" class="btn btn-secondary">Add Applicant</a>
-          <a href="{% url 'export' %}" class="btn btn-secondary" data-toggle="modal" data-target="#exportModal">Export Table</a>
-          <a href="{% url 'import' %}" class="btn btn-secondary" data-toggle="modal" data-target="#exportModal">Import Table</a>
 
-          <form method="post" action="{% url 'inb_filter_applicants' %}">
+          <form method="post" action="{% url 'fa_filter_applicants' %}">
             {% csrf_token %}
             <button type="submit" class="btn btn-secondary">Filter Applicants</button>
           </form>
@@ -36,15 +34,15 @@
             
             <tbody>
               {% for applicant_record, requirement_record in records %}
-              <tr onclick="window.location='{% url 'inb_applicant_info' applicant_record.id %}';" style="cursor: pointer;">
+              <tr onclick="window.location='{% url 'fa_applicant_info' applicant_record.id %}';" style="cursor: pointer;">
                   <td>{{ applicant_record.control_number }}</td>
                   <td>{{ applicant_record }}</td>
                   <td>{{ applicant_record.school }}</td>
                   <td>{{ applicant_record.course }}</td>
-                  <td>{% if requirement_record.requirement == 13 %}
+                  <td>{% if requirement_record.requirement == 8 %}
                             Complete
                         {% else %}
-                            {{requirement_record.requirement}}/13
+                            {{requirement_record.requirement}}/8
                         {% endif %}
                   </td>
               </tr>

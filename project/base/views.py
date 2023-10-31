@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from project.forms import SignUpForm, AddApplicantForm, ExportForm, ApplicantUploadForm, AddFinancialAssistanceForm
-from .models import CollegeStudentApplication, CollegeRequirements, CollegeStudentAccepted, CollegeStudentRejected, FinancialAssistanceApplication, ApplicantInfoRepositoryINB
+from .models import CollegeStudentApplication, CollegeRequirements, CollegeStudentAccepted, CollegeStudentRejected, ApplicantInfoRepositoryINB, FinancialAssistanceApplication, FinancialAssistanceRequirement, FinancialAssistanceAccepted, FinancialAssistanceRejected, FinancialAssistanceInfoRepository
 from django.db.models import Count
 from django.http import HttpResponse
 import csv
@@ -74,7 +74,7 @@ def import_excel(request):
                 applicant_count += 1
 
             messages.success(request, f'{applicant_count} applicant(s) imported successfully.')
-            return redirect('applicant_list')
+            return redirect('inb_applicant_list')
     
     else:
         form = ApplicantUploadForm()
@@ -204,8 +204,86 @@ def data_visualization(request):
 
     return render(request, 'dashboard.html', {'labels': labels, 'data': data, 'count': total_students, 'students_per_school': students_per_school})
 #  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+def fa_filter_applicants(request):
+    if FinancialAssistanceApplication.objects.exists():
+        applicants_to_transfer = FinancialAssistanceApplication.objects.all()
 
-def filter_applicants(request):
+        for applicant in applicants_to_transfer:
+            FinancialAssistanceInfoRepository.objects.get_or_create(
+                control_number = applicant.control_number,
+                fullname = f"{applicant.last_name}, {applicant.first_name} {applicant.middle_name}. {applicant.suffix}",
+                date_of_birth = applicant.date_of_birth,
+                place_of_birth = applicant.place_of_birth,
+                gender = applicant.gender,
+                religion = applicant.religion,
+
+                address = applicant.address,
+                email_address = applicant.email_address,
+                contact_no = applicant.contact_no,
+                general_average = applicant.general_average,
+                
+                school = applicant.school,
+                school_address = applicant.school_address,
+
+                track = applicant.track,
+                strand = applicant.strand,
+                
+                #family data
+                father_name = applicant.father_name,
+                father_age = applicant.father_age,
+                father_occupation = applicant.father_occupation,
+                father_employer = applicant.father_employer,
+                father_income = applicant.father_income,
+
+                mother_name = applicant.mother_name,
+                mother_age = applicant.mother_age,
+                mother_occupation = applicant.mother_occupation,
+                mother_employer =applicant.mother_employer,
+                mother_income = applicant.mother_income,
+
+                sibling_count = applicant.sibling_count,
+
+                sibling_name = applicant.sibling_name,
+                sibling_DOB = applicant.sibling_DOB,
+                sibling_age = applicant.sibling_age,
+                sibling_address = applicant.sibling_address,
+            )
+            
+            accepted_applicants = FinancialAssistanceApplication.objects.filter(
+            collegerequirements__requirement=8
+        ).distinct()
+
+        rejected_applicants = CollegeStudentApplication.objects.exclude(
+            collegerequirements__requirement=8
+        ).distinct()
+
+        for applicant in accepted_applicants:
+            FinancialAssistanceInfoRepository.objects.filter(control_number=applicant.control_number).update(status="Accepted")
+            FinancialAssistanceAccepted.objects.create(
+                control_number = applicant.control_number,
+                fullname = f"{applicant.last_name}, {applicant.first_name} {applicant.middle_name}. {applicant.suffix}",
+            )
+
+        for applicant in rejected_applicants:
+            FinancialAssistanceInfoRepository.objects.filter(control_number=applicant.control_number).update(status="Rejected")
+            FinancialAssistanceRejected.objects.create(
+                control_number=applicant.control_number,
+                fullname=f"{applicant.last_name}, {applicant.first_name} {applicant.middle_name}",
+                
+            )
+
+        FinancialAssistanceApplication.objects.filter(
+            Q(control_number__in=accepted_applicants.values('control_number')) |
+            Q(control_number__in=rejected_applicants.values('control_number'))
+        ).delete()
+
+        messages.success(request, "Applicants have been successfully filtered.")
+    else:
+        messages.warning(request, "There are no applicants to filter.")
+
+    return redirect('inb_applicant_list')
+
+def inb_filter_applicants(request):
     if CollegeStudentApplication.objects.exists():
         applicants_to_transfer = CollegeStudentApplication.objects.all()
 
@@ -260,8 +338,8 @@ def filter_applicants(request):
             CollegeStudentAccepted.objects.create(
                 control_number = applicant.control_number,
                 fullname = f"{applicant.last_name}, {applicant.first_name} {applicant.middle_name}",
-               
-                
+                school = applicant.school,
+                course = applicant.course,
             )
 
         for applicant in rejected_applicants:
@@ -281,39 +359,50 @@ def filter_applicants(request):
     else:
         messages.warning(request, "There are no applicants to filter.")
 
-    return redirect('applicant_list')
+    return redirect('inb_applicant_list')
+
+
+
+
+
 
 #------------------------------------------------------------------------------------------------------------------------
 
 #CRUD
 def view_applicant_table(request):
-    all_applicants = CollegeStudentApplication.objects.all()
+    if request.user.is_authenticated:
+        all_applicants = CollegeStudentApplication.objects.all()
 
-    accepted_applicants = CollegeStudentAccepted.objects.values_list('control_number', flat=True)
-    rejected_applicants = CollegeStudentRejected.objects.values_list('control_number', flat=True)
+        accepted_applicants = CollegeStudentAccepted.objects.values_list('control_number', flat=True)
+        rejected_applicants = CollegeStudentRejected.objects.values_list('control_number', flat=True)
 
-    filtered_applicants = all_applicants.exclude(control_number__in=list(accepted_applicants) + list(rejected_applicants))
+        filtered_applicants = all_applicants.exclude(control_number__in=list(accepted_applicants) + list(rejected_applicants))
 
-    requirement_records = CollegeRequirements.objects.all()
-
-    excluded_course = ("0", "Choose Course")
-    excluded_school = ("0", "Preferred School")
-    course_choice = [course for course in AddApplicantForm.COURSES_OFFERED if course != excluded_course]
-    school_choices = [school for school in AddApplicantForm.SCHOOL_CHOICES if school != excluded_school]
+        requirement_records = CollegeRequirements.objects.all()
 
     if not request.session.get('login_message_displayed', False):
         messages.success(request, "You have logged in successfully!")
         request.session['login_message_displayed'] = True
 
-    return render(request, 'INB/applicant_list.html', {'records': zip(filtered_applicants, requirement_records), 'course_choice': course_choice, 'school_choices': school_choices})
+    return render(request, 'INB/applicant_list.html', {'records': zip(filtered_applicants, requirement_records)})
 
 def financial_assistance_list(request):
     if request.user.is_authenticated:
-        financial_assistance_data = FinancialAssistanceApplication.objects.all()
-        return render(request, 'FA/assistance_applicant_list.html', {'financial_assistance_data': financial_assistance_data})
-    else:
-        messages.error(request, "You need to be logged in for this process.")
-        return redirect('home')
+        all_applicants = FinancialAssistanceApplication.objects.all()
+
+        accepted_applicants = FinancialAssistanceAccepted.objects.values_list('control_number', flat=True)
+        rejected_applicants = FinancialAssistanceRejected.objects.values_list('control_number', flat=True)
+
+        filtered_applicants = all_applicants.exclude(control_number__in=list(accepted_applicants) + list(rejected_applicants))
+        
+        requirement_records = FinancialAssistanceRequirement.objects.all()
+
+    if not request.session.get('login_message_displayed', False):
+        messages.success(request, "You have logged in successfully!")
+        request.session['login_message_displayed'] = True
+
+    return render(request, 'FA/applicant_list.html', {'records': zip(filtered_applicants, requirement_records)})
+  
 
 
 #------------------------------------------------------------------------------------------------------------------------
@@ -362,11 +451,12 @@ def rejected_applicant(request):
 
 #------------------------------------------------------------------------------------------------------------------------
 
-def applicant_information(request, pk):
+def inb_applicant_information(request, pk):
     if request.user.is_authenticated:
         try:
             records = CollegeStudentApplication.objects.get(id=pk)
             requirements = CollegeRequirements.objects.filter(control=records)
+
         except CollegeStudentApplication.DoesNotExist:
             records = None
             requirements = []
@@ -375,12 +465,27 @@ def applicant_information(request, pk):
     else:
         messages.success(request, "You need to be logged in to see this data!")
         return redirect('home')
+    
+def fa_applicant_information(request, pk):
+    if request.user.is_authenticated:
+        try:
+            records = FinancialAssistanceApplication.objects.get(id=pk)
+            requirements = FinancialAssistanceRequirement.objects.filter(control=records)
+        except FinancialAssistanceApplication.DoesNotExist:
+            records = None
+            requirements = []
+
+        return render(request, 'FA/fa_applicant_info.html', {'records': records, 'requirements': requirements})
+    else:
+        messages.success(request, "You need to be logged in to see this data!")
+        return redirect('home')
+
 
 def delete_record(request, pk, model_name):
     if request.user.is_authenticated:
         if model_name == 'application':
             model = CollegeStudentApplication
-            list_view = 'applicant_list'
+            list_view = 'inb_applicant_list'
         elif model_name == 'passed':
             model = CollegeStudentAccepted
             list_view = 'passed_applicant'
@@ -408,11 +513,11 @@ def add_information(request, form_type):
         if form_type == 'applicant':
             form = AddApplicantForm(request.POST or None)
             template = 'INB/add_record.html'
-            success_url = 'applicant_list'
+            success_url = 'inb_applicant_list'
         elif form_type == 'financial_assistance':
             form = AddFinancialAssistanceForm(request.POST or None)
             template = 'FA/assistance_add_applicant.html'
-            success_url = 'financial_assistance_list'
+            success_url = 'fa_applicant_list'
         else:
             messages.error(request, "Invalid form type.")
             return redirect('home')
@@ -436,14 +541,14 @@ def update_information(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, "Record has been updated!!")
-            return redirect("applicant_list")
+            return redirect("inb_applicant_list")
         return render(request, 'INB/update_record.html', {'form': form})
     else:
         messages.error(request, "You need to be logged in for this process.")
         return redirect('home')
     
 #Requirements~~
-def requirements_view(request, control_number):
+def inb_requirements_list(request, control_number):
     if request.user.is_authenticated:
         if request.method == 'POST':
             requirements = CollegeRequirements.objects.filter(control__control_number=control_number)
@@ -455,14 +560,33 @@ def requirements_view(request, control_number):
                 requirement.save()
 
             messages.success(request, "Requirements have been updated!!") 
-            return redirect("applicant_list")
+            return redirect("inb_applicant_list")
 
         requirements = CollegeRequirements.objects.filter(control__control_number=control_number)
         return render(request, 'INB/requirement.html', {'requirements': requirements, 'control_number': control_number})
     else:
         messages.error(request, "You need to be logged in for this process.")
         return redirect('home')
+    
+def fa_requirement_list(request, control_number):
+        if request.user.is_authenticated:
+            if request.method == 'POST':
+                requirements = FinancialAssistanceRequirement.objects.filter(control__control_number=control_number)
+                for requirement in requirements:
+                    for requirement_field in ('req_a', 'req_b', 'req_c', 'req_d', 'req_e', 'req_f', 'req_g', 'req_h'):
+                        checkbox_name = f'{requirement_field}_{requirement.id}'
+                        approved = checkbox_name in request.POST
+                        setattr(requirement, requirement_field, 'True' if approved else 'False')
+                    requirement.save()
 
+                messages.success(request, "Requirements have been updated!!") 
+                return redirect("fa_applicant_list")
+
+            requirements = FinancialAssistanceRequirement.objects.filter(control__control_number=control_number)
+            return render(request, 'FA/requirement.html', {'requirements': requirements, 'control_number': control_number})
+        else:
+            messages.error(request, "You need to be logged in for this process.")
+            return redirect('home')
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         
 #Navbar

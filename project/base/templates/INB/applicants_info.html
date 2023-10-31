@@ -4,7 +4,10 @@
 
 <div>
     <h1 style="display: inline-block;">Student Records</h1>
-    <a href="{% url 'requirements' records.control_number %}" class="btn btn-secondary" style="float: right;">View Requirements</a>
+    <form action="{% url 'inb_requirements_list' control_number=records.control_number %}" method="get">
+        <button class="btn btn-primary">View INB Requirements</button>
+      </form>
+
 </div>
 
 <div class="card">
@@ -72,7 +75,7 @@
   </div>
 
 <br/> <br/>
-<a href = "{% url 'applicant_list' %}" class="btn btn-secondary">Back</a>
+<a href = "{% url 'inb_applicant_list' %}" class="btn btn-secondary">Back</a>
 <a href = "{% url 'update_record' records.id  %}" class="btn btn-secondary">Update Record</a>
 <a href="{% url 'delete_record' records.control_number 'application' %}" class="btn btn-danger">Delete Application</a>
 

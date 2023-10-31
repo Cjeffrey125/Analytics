@@ -9,6 +9,9 @@
     <p>School: {{ passed_applicant.school }}</p>
     <p>Course: {{ passed_applicant.course }}</p>
 
+    <br>
+    <h1>Grades</h1>
+
     <a href="{% url 'delete_record' passed_applicant.control_number 'passed' %}" class="btn btn-danger">Delete Passed Applicant</a>
 
 

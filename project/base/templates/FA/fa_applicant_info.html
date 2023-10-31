@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  {% if user.is_authenticated %}
+    <div class="main-content">
+      <h1>Financial Assistance Applicant Details</h1>
+
+      <form action="{% url 'fa_requirements_list' control_number=records.control_number %}" method="get">
+        <button class="btn btn-primary">View FA Requirements</button>
+      </form>
+
+      <div>
+        <a style="display: inline-block;">Student Records</a>
+       
+    </div>
+
+      <table class="table table-light">
+        <tr>
+          <th>Control Number</th>
+          <td>{{ records.control_number }}</td>
+        </tr>
+        <tr>
+          <th>Name</th>
+          <td>{{ records.first_name }} {{ records.last_name }}</td>
+        </tr>
+        <tr>
+          <th>School</th>
+          <td>{{ records.school }}</td>
+        </tr>
+        <tr>
+          <th>Strand</th>
+          <td>{{ records.strand }}</td>
+        </tr>
+      </table>
+    </div>
+  {% endif %}
+
+{% endblock %}
