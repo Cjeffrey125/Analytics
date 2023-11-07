@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from project.forms import SignUpForm, AddApplicantForm, ExportForm, ApplicantUploadForm, AddFinancialAssistanceForm
@@ -210,58 +210,51 @@ def fa_filter_applicants(request):
 
         for applicant in applicants_to_transfer:
             FinancialAssistanceInfoRepository.objects.get_or_create(
-                control_number = applicant.control_number,
-                fullname = f"{applicant.last_name}, {applicant.first_name} {applicant.middle_name}. {applicant.suffix}",
-                date_of_birth = applicant.date_of_birth,
-                place_of_birth = applicant.place_of_birth,
-                gender = applicant.gender,
-                religion = applicant.religion,
-
-                address = applicant.address,
-                email_address = applicant.email_address,
-                contact_no = applicant.contact_no,
-                general_average = applicant.general_average,
-                
-                school = applicant.school,
-                school_address = applicant.school_address,
-
-                track = applicant.track,
-                strand = applicant.strand,
-                
-                #family data
-                father_name = applicant.father_name,
-                father_age = applicant.father_age,
-                father_occupation = applicant.father_occupation,
-                father_employer = applicant.father_employer,
-                father_income = applicant.father_income,
-
-                mother_name = applicant.mother_name,
-                mother_age = applicant.mother_age,
-                mother_occupation = applicant.mother_occupation,
-                mother_employer =applicant.mother_employer,
-                mother_income = applicant.mother_income,
-
-                sibling_count = applicant.sibling_count,
-
-                sibling_name = applicant.sibling_name,
-                sibling_DOB = applicant.sibling_DOB,
-                sibling_age = applicant.sibling_age,
-                sibling_address = applicant.sibling_address,
+                control_number=applicant.control_number,
+                fullname=f"{applicant.last_name}, {applicant.first_name} {applicant.middle_name}. {applicant.suffix}",
+                date_of_birth=applicant.date_of_birth,
+                place_of_birth=applicant.place_of_birth,
+                gender=applicant.gender,
+                religion=applicant.religion,
+                address=applicant.address,
+                email_address=applicant.email_address,
+                contact_no=applicant.contact_no,
+                general_average=applicant.general_average,
+                school=applicant.school,
+                school_address=applicant.school_address,
+                track=applicant.track,
+                strand=applicant.strand,
+                # family data
+                father_name=applicant.father_name,
+                father_age=applicant.father_age,
+                father_occupation=applicant.father_occupation,
+                father_employer=applicant.father_employer,
+                father_income=applicant.father_income,
+                mother_name=applicant.mother_name,
+                mother_age=applicant.mother_age,
+                mother_occupation=applicant.mother_occupation,
+                mother_employer=applicant.mother_employer,
+                mother_income=applicant.mother_income,
+                sibling_count=applicant.sibling_count,
+                sibling_name=applicant.sibling_name,
+                sibling_DOB=applicant.sibling_DOB,
+                sibling_age=applicant.sibling_age,
+                sibling_address=applicant.sibling_address,
             )
-            
-            accepted_applicants = FinancialAssistanceApplication.objects.filter(
-            collegerequirements__requirement=8
+
+        accepted_applicants = FinancialAssistanceApplication.objects.filter(
+            control_number__in=FinancialAssistanceRequirement.objects.filter(requirement=8).values('control_number')
         ).distinct()
 
-        rejected_applicants = CollegeStudentApplication.objects.exclude(
-            collegerequirements__requirement=8
+        rejected_applicants = FinancialAssistanceApplication.objects.exclude(
+            control_number__in=accepted_applicants.values('control_number')
         ).distinct()
 
         for applicant in accepted_applicants:
             FinancialAssistanceInfoRepository.objects.filter(control_number=applicant.control_number).update(status="Accepted")
             FinancialAssistanceAccepted.objects.create(
-                control_number = applicant.control_number,
-                fullname = f"{applicant.last_name}, {applicant.first_name} {applicant.middle_name}. {applicant.suffix}",
+                control_number=applicant.control_number,
+                fullname=f"{applicant.last_name}, {applicant.first_name} {applicant.middle_name}. {applicant.suffix}",
             )
 
         for applicant in rejected_applicants:
@@ -269,7 +262,6 @@ def fa_filter_applicants(request):
             FinancialAssistanceRejected.objects.create(
                 control_number=applicant.control_number,
                 fullname=f"{applicant.last_name}, {applicant.first_name} {applicant.middle_name}",
-                
             )
 
         FinancialAssistanceApplication.objects.filter(
@@ -281,7 +273,8 @@ def fa_filter_applicants(request):
     else:
         messages.warning(request, "There are no applicants to filter.")
 
-    return redirect('inb_applicant_list')
+    return redirect('fa_applicant_list')
+
 
 def inb_filter_applicants(request):
     if CollegeStudentApplication.objects.exists():
@@ -363,9 +356,6 @@ def inb_filter_applicants(request):
 
 
 
-
-
-
 #------------------------------------------------------------------------------------------------------------------------
 
 #CRUD
@@ -406,47 +396,98 @@ def financial_assistance_list(request):
 
 
 #------------------------------------------------------------------------------------------------------------------------
-#needs to be refactored
-def passed_applicant(request):
+#done refactoring
+def inb_applicant_info(request, status, control_number):
     if request.user.is_authenticated:
-        applicants = CollegeStudentAccepted.objects.all()
-        return render(request, 'INB/accepted_applicants.html', {'applicants': applicants})
-    else:
-        messages.error(request, "You don't have permission.")
-        return redirect('home')
-    
-def passed_applicant_info(request, control_number):
-    if request.user.is_authenticated:
+        if status == 'passed':
+            model_class = CollegeStudentAccepted
+            template = 'INB/passed_info.html'
+        elif status == 'failed':
+            model_class = CollegeStudentRejected
+            template = 'INB/failed_info.html'
+        else:
+            messages.error(request, "Invalid status parameter.")
+            return redirect('home')
+
         try:
-            passed_applicant = CollegeStudentAccepted.objects.get(control_number=control_number)
-            return render(request, 'INB/passed_info.html', {'passed_applicant': passed_applicant})
-        except CollegeStudentAccepted.DoesNotExist:
-            messages.error(request, "Passed applicant not found.")
-            return redirect('passed_applicant')
+            if status == 'passed':
+                passed_applicant = get_object_or_404(model_class, control_number=control_number)
+                return render(request, template, {'passed_applicant': passed_applicant, 'status': status})
+            elif status == 'failed':
+                failed_applicant = get_object_or_404(model_class, control_number=control_number)
+                return render(request, template, {'failed_applicant': failed_applicant, 'status': status})
+        except model_class.DoesNotExist:
+            messages.error(request, f"{status.capitalize()} applicant not found.")
+            return redirect(f'inb_{status}_applicant')
+
     else:
         messages.error(request, "You don't have permission.")
         return redirect('home')
-    
-def failed_applicant_info(request, control_number):
+
+def inb_applicant_list(request, status):
     if request.user.is_authenticated:
-        try:
-            failed_applicant = CollegeStudentRejected.objects.get(control_number=control_number)
-            return render(request, 'INB/failed_info.html', {'failed_applicant': failed_applicant})
-        except CollegeStudentAccepted.DoesNotExist:
-            messages.error(request, "Failed applicant not found.")
-            return redirect('passed_applicant')
+        if status == 'passed':
+            model_class = CollegeStudentAccepted
+            template = 'INB/accepted_applicants.html'
+        elif status == 'failed':
+            model_class = CollegeStudentRejected
+            template = 'INB/rejected_applicants.html'
+        else:
+            messages.error(request, "Invalid status parameter.")
+            return redirect('home')
+
+        applicants = model_class.objects.all()
+        return render(request, template, {'applicants': applicants})
     else:
         messages.error(request, "You don't have permission.")
         return redirect('home')
-    
-def rejected_applicant(request):
+
+
+def fa_applicant_info(request, status, control_number):
     if request.user.is_authenticated:
-        applicants = CollegeStudentRejected.objects.all()
-        return render(request, 'INB/rejected_applicants.html', {'applicants': applicants})
+            if status == 'passed':
+                model_class = FinancialAssistanceAccepted
+                template = 'FA/fa_passed_info.html'
+            elif status == 'failed':
+                model_class = FinancialAssistanceRejected
+                template = 'FA/fa_failed_info.html'
+            else:
+                messages.error(request, "Invalid status parameter.")
+                return redirect('home')
+
+            try:
+                if status == 'passed':
+                    passed_applicant = get_object_or_404(model_class, control_number=control_number)
+                    return render(request, template, {'passed_applicant': passed_applicant, 'status': status})
+                elif status == 'failed':
+                    failed_applicant = get_object_or_404(model_class, control_number=control_number)
+                    return render(request, template, {'failed_applicant': failed_applicant, 'status': status})
+            except model_class.DoesNotExist:
+                messages.error(request, f"{status.capitalize()} applicant not found.")
+                return redirect(f'inb_{status}_applicant')
+
     else:
         messages.error(request, "You don't have permission.")
         return redirect('home')
-        
+
+def fa_applicant_list(request, status):
+    if request.user.is_authenticated:
+        if status == 'passed':
+            model_class = FinancialAssistanceAccepted
+            template = 'FA/fa_passed_list.html'
+        elif status == 'failed':
+            model_class = FinancialAssistanceRejected
+            template = 'FA/fa_failed_list.html'
+        else:
+            messages.error(request, "Invalid status parameter.")
+            return redirect('home')
+
+        applicants = model_class.objects.all()
+        return render(request, template, {'applicants': applicants})
+    else:
+        messages.error(request, "You don't have permission.")
+        return redirect('home')
+
 
 
 #------------------------------------------------------------------------------------------------------------------------
@@ -488,10 +529,10 @@ def delete_record(request, pk, model_name):
             list_view = 'inb_applicant_list'
         elif model_name == 'passed':
             model = CollegeStudentAccepted
-            list_view = 'passed_applicant'
+            list_view = 'inb_passed_applicant'
         elif model_name == 'failed':
             model = CollegeStudentRejected
-            list_view = 'failed_applicant'
+            list_view = 'inb_failed_applicant'
         else:
             messages.error(request, "Invalid model name")
             return render(request, 'error_page.html', {'message': "Invalid model name provided"})
@@ -507,6 +548,8 @@ def delete_record(request, pk, model_name):
     else:
         messages.error(request, "You need to be logged in for this process")
         return redirect('home')
+
+    
 
 def add_information(request, form_type):
     if request.user.is_authenticated:

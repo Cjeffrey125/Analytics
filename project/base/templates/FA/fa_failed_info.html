@@ -9,10 +9,9 @@
     <p>School: {{ failed_applicant.school }}</p>
     <p>Course: {{ failed_applicant.course }}</p>
 
-    <a href="{% url 'delete_applicant' 'failed' failed_applicant.control_number %}" class="btn btn-danger">Delete Applicant</a>
+    
 
 
-
-    <a href="{% url 'inb_failed_applicant' %}" class="btn btn-secondary">Back to Applicant List</a>
+    <a href="{% url 'fa_failed_applicant' %}" class="btn btn-secondary">Back to Applicant List</a>
 </div>
 {% endblock %}

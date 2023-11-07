@@ -77,7 +77,7 @@
 <br/> <br/>
 <a href = "{% url 'inb_applicant_list' %}" class="btn btn-secondary">Back</a>
 <a href = "{% url 'update_record' records.id  %}" class="btn btn-secondary">Update Record</a>
-<a href="{% url 'delete_record' records.control_number 'application' %}" class="btn btn-danger">Delete Application</a>
+<a href="{% url 'delete_applicant' records.control_number 'application' %}" class="btn btn-danger">Delete Application</a>
 
 
 

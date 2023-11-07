@@ -23,7 +23,7 @@
             </thead>
             <tbody>
             {% for applicant in applicants %}
-            <tr onclick="window.location='{% url 'inb_failed_applicant_info' applicant.control_number %}';" style="cursor: pointer;">
+                <tr onclick="window.location='{% url 'fa_failed_applicant_info' applicant.control_number %}';" style="cursor: pointer;">
                     <td>{{ applicant.control_number }}</td>
                     <td>{{ applicant.fullname }}</td>
                     <td></td>
