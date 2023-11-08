@@ -10,7 +10,7 @@
 
     <div class="nav">
       <nav>
-        <a class="navbar-brand" href="{% url 'home' %}" style="color: black;">
+        <a class="navbar-brand" href="{% url 'home' %}" style="color: rgb(255, 255, 255);">
           <img src="{% static 'images/logo.png' %}" class="logo"> Biñan Analytica 
         </a>
 
@@ -18,15 +18,15 @@
           
           {% if user.is_authenticated %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'dashboard' %}" style="color: black;">Dashboard</a>
+          <a class="nav-link" href="{% url 'dashboard' %}" style="color: rgb(255, 255, 255);">Dashboard</a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'inb_applicant_list' %}" style="color: black;">College</a>
+          <a class="nav-link" href="{% url 'inb_applicant_list' %}" style="color: rgb(255, 255, 255);">College</a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'fa_applicant_list' %}" style="color: black;">Financial Assistance</a>
+          <a class="nav-link" href="{% url 'fa_applicant_list' %}" style="color: rgb(255, 255, 255);">Financial Assistance</a>
         </li>
 
         <img src="{% static 'images/profile.png' %}" class="user-pic" onclick="toggleMenu()">
