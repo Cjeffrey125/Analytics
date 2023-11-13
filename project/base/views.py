@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from project.forms import SignUpForm, AddApplicantForm, ExportForm, ApplicantUploadForm, AddFinancialAssistanceForm
+from project.forms import SignUpForm, AddINBForm, ExportForm, ApplicantUploadForm, AddFinancialAssistanceForm
 from .models import CollegeStudentApplication, CollegeRequirements, CollegeStudentAccepted, CollegeStudentRejected, ApplicantInfoRepositoryINB, FinancialAssistanceApplication, FinancialAssistanceRequirement, FinancialAssistanceAccepted, FinancialAssistanceRejected, FinancialAssistanceInfoRepository
 from django.db.models import Count
 from django.http import HttpResponse
@@ -527,12 +527,20 @@ def delete_record(request, pk, model_name):
         if model_name == 'application':
             model = CollegeStudentApplication
             list_view = 'inb_applicant_list'
-        elif model_name == 'passed':
+        elif model_name == 'inb_passed':
             model = CollegeStudentAccepted
             list_view = 'inb_passed_applicant'
-        elif model_name == 'failed':
+        elif model_name == 'inb_failed':
             model = CollegeStudentRejected
             list_view = 'inb_failed_applicant'
+            
+        elif model_name == 'fa_passed':
+            model = FinancialAssistanceAccepted
+            list_view = 'fa_passed_applicant'
+        elif model_name == 'fa_failed':
+            model = FinancialAssistanceRejected
+            list_view = 'fa_failed_applicant'
+        
         else:
             messages.error(request, "Invalid model name")
             return render(request, 'error_page.html', {'message': "Invalid model name provided"})
@@ -540,9 +548,9 @@ def delete_record(request, pk, model_name):
         try:
             record = model.objects.get(control_number=pk)
             record.delete()
-            messages.success(request, f"Record for {model_name.capitalize()} has been deleted")
+            messages.success(request, f"Record has been deleted")
         except model.DoesNotExist:
-            messages.error(request, f"{model_name.capitalize()} record not found")
+            messages.error(request, f"Record not found")
 
         return redirect(list_view)
     else:
@@ -554,7 +562,7 @@ def delete_record(request, pk, model_name):
 def add_information(request, form_type):
     if request.user.is_authenticated:
         if form_type == 'applicant':
-            form = AddApplicantForm(request.POST or None)
+            form = AddINBForm(request.POST or None)
             template = 'INB/add_record.html'
             success_url = 'inb_applicant_list'
         elif form_type == 'financial_assistance':
@@ -578,17 +586,34 @@ def add_information(request, form_type):
     
     
 def update_information(request, pk):
-    if request.user.is_authenticated:
-        current_record = CollegeStudentApplication.objects.get(id = pk)
-        form =  AddApplicantForm(request.POST or None, instance=current_record)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Record has been updated!!")
-            return redirect("inb_applicant_list")
-        return render(request, 'INB/update_record.html', {'form': form})
-    else:
+    if not request.user.is_authenticated:
         messages.error(request, "You need to be logged in for this process.")
         return redirect('home')
+
+    try:
+        current_record_inb = CollegeStudentApplication.objects.get(id=pk)
+        form_inb = AddINBForm(request.POST or None, instance=current_record_inb)
+        if form_inb.is_valid():
+            form_inb.save()
+            messages.success(request, "INB Record has been updated!!")
+            return redirect("inb_applicant_list")
+        return render(request, 'INB/update_record.html', {'form': form_inb})
+    except CollegeStudentApplication.DoesNotExist:
+        pass  
+
+    try:
+        current_record_fa = FinancialAssistanceApplication.objects.get(id=pk)
+        form_fa = AddFinancialAssistanceForm(request.POST or None, instance=current_record_fa)
+        if form_fa.is_valid():
+            form_fa.save()
+            messages.success(request, "Financial Assistance Record has been updated!!")
+            return redirect("fa_applicant_list")
+        return render(request, 'FA/fa_update_record.html', {'form': form_fa})
+    except FinancialAssistanceApplication.DoesNotExist:
+        pass  
+
+    messages.error(request, "Invalid record or model name")
+    return render(request, 'error_page.html', {'message': "Invalid record or model name provided"})
     
 #Requirements~~
 def inb_requirements_list(request, control_number):
@@ -612,24 +637,26 @@ def inb_requirements_list(request, control_number):
         return redirect('home')
     
 def fa_requirement_list(request, control_number):
-        if request.user.is_authenticated:
-            if request.method == 'POST':
-                requirements = FinancialAssistanceRequirement.objects.filter(control__control_number=control_number)
-                for requirement in requirements:
-                    for requirement_field in ('req_a', 'req_b', 'req_c', 'req_d', 'req_e', 'req_f', 'req_g', 'req_h'):
-                        checkbox_name = f'{requirement_field}_{requirement.id}'
-                        approved = checkbox_name in request.POST
-                        setattr(requirement, requirement_field, 'True' if approved else 'False')
-                    requirement.save()
-
-                messages.success(request, "Requirements have been updated!!") 
-                return redirect("fa_applicant_list")
-
+    if request.user.is_authenticated:
+        if request.method == 'POST':
             requirements = FinancialAssistanceRequirement.objects.filter(control__control_number=control_number)
-            return render(request, 'FA/requirement.html', {'requirements': requirements, 'control_number': control_number})
-        else:
-            messages.error(request, "You need to be logged in for this process.")
-            return redirect('home')
+            for requirement in requirements:
+                for requirement_field in ('req_a', 'req_b', 'req_c', 'req_d', 'req_e', 'req_f', 'req_g', 'req_h'):
+                    checkbox_name = f'{requirement_field}_{requirement.id}'
+                    approved = request.POST.get(checkbox_name, False)
+                    print(f"{checkbox_name}: {approved}")
+                    setattr(requirement, requirement_field, 'True' if approved else 'False')
+                requirement.save()
+
+            messages.success(request, "Requirements have been updated!!") 
+            return redirect("fa_applicant_list")
+
+        requirements = FinancialAssistanceRequirement.objects.filter(control__control_number=control_number)
+        return render(request, 'FA/requirement.html', {'requirements': requirements, 'control_number': control_number})
+    else:
+        messages.error(request, "You need to be logged in for this process.")
+        return redirect('home')
+
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         
 #Navbar

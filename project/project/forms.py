@@ -45,7 +45,7 @@ class ExportForm(forms.Form):
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-class AddApplicantForm(forms.ModelForm):
+class AddINBForm(forms.ModelForm):
         GENDER_CHOICES = [
             ("0", "Select Gender"),
             ("Male", "Male"),
