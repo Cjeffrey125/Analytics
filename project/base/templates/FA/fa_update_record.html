@@ -6,10 +6,10 @@
 
 <link rel="stylesheet" type="text/css" href="{% static '/css/main.css' %}">
 
-    <h1>Add Record</h1>
+    <h1>Update Record</h1>
 
     <br/>
-    <form method="POST" action="{% url 'add_fa_applicant' %}">
+    <form method="POST">
         {% csrf_token %}
 
     <div class = "text-center">

@@ -11,7 +11,7 @@
       <div class="main-content flex-grow-1">
         <h1>Applicant List</h1>
         <div class="d-flex justify-content-end">
-          <a href="{% url 'add_applicant' %}" class="btn btn-secondary">Add Applicant</a>
+          <a href="{% url 'add_fa_applicant' %}" class="btn btn-secondary">Add Applicant</a>
 
           <form method="post" action="{% url 'fa_filter_applicants' %}">
             {% csrf_token %}
