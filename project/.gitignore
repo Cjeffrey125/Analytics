@@ -1,0 +1,13 @@
+# Ignore virtual environment
+venv/
+
+# Ignore sensitive environment files
+.env
+
+# Ignore database files (e.g., SQLite)
+db.sqlite3
+
+# Ignore log files
+*.log
+
+# Ignore other environment-specific settings and files

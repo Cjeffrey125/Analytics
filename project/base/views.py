@@ -474,10 +474,10 @@ def fa_applicant_list(request, status):
     if request.user.is_authenticated:
         if status == 'passed':
             model_class = FinancialAssistanceAccepted
-            template = 'FA/fa_passed_list.html'
+            template = 'FA/fa_passed_info.html'
         elif status == 'failed':
             model_class = FinancialAssistanceRejected
-            template = 'FA/fa_failed_list.html'
+            template = 'FA/fa_failed_info.html'
         else:
             messages.error(request, "Invalid status parameter.")
             return redirect('home')
@@ -522,41 +522,36 @@ def fa_applicant_information(request, pk):
         return redirect('home')
 
 
+
 def delete_record(request, pk, model_name):
     if request.user.is_authenticated:
-        if model_name == 'application':
-            model = CollegeStudentApplication
-            list_view = 'inb_applicant_list'
-        elif model_name == 'inb_passed':
-            model = CollegeStudentAccepted
-            list_view = 'inb_passed_applicant'
-        elif model_name == 'inb_failed':
-            model = CollegeStudentRejected
-            list_view = 'inb_failed_applicant'
+        if model_name in {'application', 'inb_passed', 'inb_failed', 'fa_passed', 'fa_failed'}:
+            model = {
+                'application': CollegeStudentApplication,
+                'inb_passed': CollegeStudentAccepted,
+                'inb_failed': CollegeStudentRejected,
+                'fa_passed': FinancialAssistanceAccepted,
+                'fa_failed': FinancialAssistanceRejected,
+            }[model_name]
+            list_view = {
+                'application': 'inb_applicant_list',
+                'inb_passed': 'inb_passed_applicant',
+                'inb_failed': 'inb_failed_applicant',
+                'fa_passed': 'fa_passed_applicant',
+                'fa_failed': 'fa_failed_applicant',
+            }[model_name]
             
-        elif model_name == 'fa_passed':
-            model = FinancialAssistanceAccepted
-            list_view = 'fa_passed_applicant'
-        elif model_name == 'fa_failed':
-            model = FinancialAssistanceRejected
-            list_view = 'fa_failed_applicant'
-        
-        else:
-            messages.error(request, "Invalid model name")
-            return render(request, 'error_page.html', {'message': "Invalid model name provided"})
-
-        try:
-            record = model.objects.get(control_number=pk)
+            record = get_object_or_404(model, control_number=pk)
             record.delete()
             messages.success(request, f"Record has been deleted")
-        except model.DoesNotExist:
-            messages.error(request, f"Record not found")
-
-        return redirect(list_view)
+            
+            return redirect(list_view)
+        else:
+            messages.error(request, "Invalid model name")
+            return redirect('home')  
     else:
         messages.error(request, "You need to be logged in for this process")
         return redirect('home')
-
     
 
 def add_information(request, form_type):

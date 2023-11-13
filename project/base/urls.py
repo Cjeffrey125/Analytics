@@ -14,6 +14,7 @@ urlpatterns = [
     path('delete_applicant/<str:model_name>/<str:pk>/', views.delete_record, name='delete_applicant'),
 
 
+
     path('Add_IskolarngBayan_Applicant/', views.add_information, {'form_type': 'applicant'}, name='add_inb_applicant'),
     path('Add_FinancialAssistance_Applicant/', views.add_information, {'form_type': 'financial_assistance'}, name='add_fa_applicant'),
     path('Update_Record/<int:pk>', views.update_information, name='update_inb_record'),
